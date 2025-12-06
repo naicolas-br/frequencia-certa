@@ -1,15 +1,14 @@
 <?php
 
 use Illuminate\Http\Request;
-use App\Models\User;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\DisciplinaApiController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-// Rota de Teste Temporária (sem segurança)
-Route::get('/teste-disciplinas', function () {
-    // Pega o usuário ID 1 (Nicolas) e retorna as disciplinas dele
-    return User::find(1)->disciplinas;
+// Grupo de rotas protegidas (Só acessa se tiver logado no App)
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/disciplinas', [DisciplinaApiController::class, 'index']);
 });
