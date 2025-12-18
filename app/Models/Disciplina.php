@@ -34,7 +34,7 @@ class Disciplina extends Model
     public function horarios(): HasMany
     {
         // Usa a foreign key 'disciplina_id' na tabela 'horario_aulas'
-        return $this->hasMany(HorarioAula::class);
+        return $this->hasMany(GradeHoraria::class, 'disciplina_id');
     }
     
     /**

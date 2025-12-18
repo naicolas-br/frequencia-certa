@@ -67,6 +67,16 @@
                                         <h4 class="text-lg font-bold text-gray-900 dark:text-white">
                                             {{ $disciplina->nome }}
                                         </h4>
+                                        <div class="flex flex-col sm:flex-row gap-2 mt-1">
+                                            <p class="text-xs text-gray-500">Prof. Não informado</p>
+
+                                            <a href="{{ route('grade.index', $disciplina->id) }}" class="text-xs text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                Configurar Horários
+                                                </a>
+                                        </div>
                                         <p class="text-xs text-gray-500">
                                             {{ $disciplina->horarios->count() }} aulas semanais
                                         </p>

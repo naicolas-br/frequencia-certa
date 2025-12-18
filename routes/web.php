@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DisciplinaController;
+use App\Http\Controllers\GradeHorariaController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,6 +21,20 @@ Route::get('/', function () {
 
 // --- GRUPO PROTEGIDO (Autenticação Necessária) ---
 Route::middleware(['auth', 'verified'])->group(function () {
+
+// --- ROTAS DE GRADE HORÁRIA ---
+
+// Tela de configuração de horários (Ex: /disciplinas/1/horarios)
+    Route::get('/disciplinas/{id}/horarios', [GradeHorariaController::class, 'index'])->name('grade.index');
+    
+    // Salvar horário
+    Route::post('/disciplinas/{id}/horarios', [GradeHorariaController::class, 'store'])->name('grade.store');
+    
+    // Apagar horário
+    Route::delete('/grade/{id}', [GradeHorariaController::class, 'destroy'])->name('grade.destroy');
+
+// --- ROTAS DE DISCIPLINAS ---
+    Route::get('/disciplinas', [DisciplinaController::class, 'index'])->name('disciplinas');
 
     // ✅ CORREÇÃO: O Dashboard agora aponta para o seu Controller
     // Isso vai listar as disciplinas ao logar, em vez de mostrar uma tela vazia
