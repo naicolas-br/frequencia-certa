@@ -1,59 +1,49 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-bold text-xl text-gray-800 dark:text-white leading-tight">
-            {{ __('Nova Disciplina') }}
-        </h2>
+        <div class="flex items-center gap-4">
+            <a href="{{ route('dashboard') }}" class="p-2 -ml-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+            </a>
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                {{ __('Nova Disciplina') }}
+            </h2>
+        </div>
     </x-slot>
 
-    <div class="py-12">
+    <div class="py-6 sm:py-12">
         <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     
-                    <form method="POST" action="{{ route('disciplinas.store') }}">
+                    <form method="POST" action="{{ route('disciplinas.store') }}" class="space-y-6">
                         @csrf
 
-                        <div class="mb-4">
-                            <label for="nome" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nome da Matéria</label>
-                            <input type="text" name="nome" id="nome" required placeholder="Ex: Matemática"
-                                class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-blue-500 focus:ring-blue-500 shadow-sm">
-                            @error('nome') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                        <div>
+                            <x-input-label for="nome" value="Nome da Matéria" />
+                            <x-text-input id="nome" name="nome" type="text" class="mt-1 block w-full h-12" placeholder="Ex: Matemática" required autofocus />
+                            <x-input-error class="mt-2" :messages="$errors->get('nome')" />
                         </div>
 
-                        <div class="mb-6">
-                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Escolha uma Cor (Etiqueta)</label>
-                            <div class="flex gap-4 flex-wrap">
-                                @php
-                                    $colors = [
-                                        '#1E3A8A' => 'Azul Inst.', 
-                                        '#DC2626' => 'Vermelho', 
-                                        '#F59E0B' => 'Amarelo', 
-                                        '#10B981' => 'Verde', 
-                                        '#8B5CF6' => 'Roxo', 
-                                        '#EC4899' => 'Rosa'
-                                    ];
-                                @endphp
-
-                                @foreach($colors as $hex => $label)
-                                    <label class="cursor-pointer">
-                                        <input type="radio" name="cor" value="{{ $hex }}" class="peer sr-only" {{ $loop->first ? 'checked' : '' }}>
-                                        <div class="w-10 h-10 rounded-full bg-gray-200 peer-checked:ring-4 ring-offset-2 ring-blue-500 transition-all flex items-center justify-center text-white"
-                                             style="background-color: {{ $hex }}">
-                                             </div>
-                                        <span class="text-xs text-center block mt-1 text-gray-500">{{ $label }}</span>
-                                    </label>
-                                @endforeach
+                        <div>
+                            <x-input-label for="cor" value="Cor da Etiqueta" />
+                            <div class="mt-2 flex items-center gap-4">
+                                <div class="relative w-full h-14">
+                                    <input type="color" name="cor" id="cor" value="#1E3A8A" 
+                                           class="absolute top-0 left-0 w-full h-full p-1 rounded-lg border border-gray-300 dark:border-gray-700 cursor-pointer bg-white dark:bg-gray-900">
+                                </div>
                             </div>
-                            @error('cor') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                            <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                                Toque na barra acima para escolher uma cor personalizada.
+                            </p>
+                            <x-input-error class="mt-2" :messages="$errors->get('cor')" />
                         </div>
 
-                        <div class="flex items-center justify-end gap-4">
-                            <a href="{{ route('dashboard') }}" class="text-gray-500 hover:text-gray-700 text-sm underline">Cancelar</a>
-                            
-                            <button type="submit" 
-                                class="bg-[#1E3A8A] hover:bg-blue-800 text-white font-bold py-2 px-6 rounded shadow transition">
-                                Salvar Disciplina
-                            </button>
+                        <div class="pt-4">
+                            <x-primary-button class="w-full justify-center h-12 text-lg">
+                                {{ __('Salvar Disciplina') }}
+                            </x-primary-button>
                         </div>
                     </form>
 
