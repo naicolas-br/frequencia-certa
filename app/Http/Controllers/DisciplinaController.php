@@ -26,21 +26,25 @@ class DisciplinaController extends Controller
     }
 
     // 2. Recebe os dados e salva no banco
-    public function store(Request $request)
+public function store(Request $request)
     {
-        // Validação básica (O nome é obrigatório)
-        $request->validate([
-            'nome' => 'required|string|max:255',
-            'cor' => 'required|string|max:7', // Ex: #FF0000
-        ]);
+        // 1. Validação
+    $request->validate([
+        'nome' => 'required|string|max:255',
+        'cor' => 'required|string|max:7',
+    ]);
 
-        // Cria a disciplina vinculada ao usuário logado
-        Auth::user()->disciplinas()->create([
-            'nome' => $request->nome,
-            'cor' => $request->cor,
-        ]);
+    // 2. Salvar no Banco
+    // Usamos o relacionamento para já vincular ao usuário logado
+    Auth::user()->disciplinas()->create([
+        'nome' => $request->nome,
+        'cor' => $request->cor,
+        // Valores padrão (obrigatórios no banco, mas ocultos no form por enquanto)
+        'carga_horaria_total' => 0, 
+        'porcentagem_minima' => 75,
+    ]);
 
-        // Redireciona para o Dashboard com mensagem de sucesso
-        return redirect()->route('dashboard')->with('success', 'Disciplina criada com sucesso!');
+    // 3. Redirecionar
+    return redirect()->route('dashboard')->with('success', 'Disciplina criada com sucesso!');
     }
 }

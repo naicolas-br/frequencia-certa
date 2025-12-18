@@ -14,6 +14,7 @@ class Disciplina extends Model
     protected $fillable = [
         'user_id',
         'nome',
+        'cor',
         'carga_horaria_total',
         'porcentagem_minima',
     ];

@@ -100,7 +100,7 @@
                         </div>
                     @endforelse
 
-                    <a href="#" class="bg-gray-50 dark:bg-gray-700 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center p-6 hover:bg-gray-100 dark:hover:bg-gray-600 transition cursor-pointer group">
+                    <a href="{{ route('disciplinas.criar') }}" class="bg-gray-50 dark:bg-gray-700 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 flex items-center justify-center p-6 hover:bg-gray-100 dark:hover:bg-gray-600 transition cursor-pointer group">
                         <div class="text-center">
                             <div class="mx-auto h-12 w-12 flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-600 group-hover:bg-blue-100 dark:group-hover:bg-blue-900 transition">
                                 <svg class="h-6 w-6 text-gray-400 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
