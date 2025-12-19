@@ -13,6 +13,43 @@
         </div>
     </x-slot>
 
+    @php
+        // 1. Coleta todas as frequências de todas as matérias em uma única lista
+        $todasFrequencias = $disciplinas->pluck('frequencias')->collapse();
+        
+        // 2. Contagem Global
+        $totalAulasGeral = $todasFrequencias->count();
+        $totalFaltasGeral = $todasFrequencias->where('presente', false)->count();
+        
+        // 3. Cálculo da Porcentagem Global
+        $porcentagemGlobal = 100;
+        if ($totalAulasGeral > 0) {
+            $porcentagemGlobal = round((($totalAulasGeral - $totalFaltasGeral) / $totalAulasGeral) * 100);
+        }
+
+        // 4. Definição de Cores Global
+        $corGlobal = 'text-emerald-600 dark:text-emerald-400';
+        $bgIconeGlobal = 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-500';
+        
+        if($porcentagemGlobal < 75) {
+            $corGlobal = 'text-red-600 dark:text-red-400';
+            $bgIconeGlobal = 'bg-red-50 dark:bg-red-900/30 text-red-500';
+        } elseif($porcentagemGlobal < 85) {
+            $corGlobal = 'text-yellow-600 dark:text-yellow-400';
+            $bgIconeGlobal = 'bg-yellow-50 dark:bg-yellow-900/30 text-yellow-500';
+        }
+
+        // 5. Cálculo "Em Risco" (Matérias com < 75%)
+        $materiasEmRisco = 0;
+        foreach($disciplinas as $d) {
+            $t = $d->frequencias->count();
+            $f = $d->frequencias->where('presente', false)->count();
+            if($t > 0 && ((($t - $f) / $t) * 100) < 75) {
+                $materiasEmRisco++;
+            }
+        }
+    @endphp
+
     <div class="py-4 sm:py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
             
@@ -21,10 +58,12 @@
                 <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-5 flex items-center justify-between">
                     <div>
                         <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Frequência Global</p>
-                        <h3 class="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-1">--%</h3>
-                        <p class="text-[10px] text-gray-400 mt-1">Calculando...</p>
+                        <h3 class="text-3xl font-extrabold {{ $corGlobal }} mt-1">{{ $porcentagemGlobal }}%</h3>
+                        <p class="text-[10px] text-gray-400 mt-1">
+                            {{ $totalFaltasGeral }} faltas em {{ $totalAulasGeral }} aulas
+                        </p>
                     </div>
-                    <div class="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-500">
+                    <div class="w-12 h-12 rounded-full {{ $bgIconeGlobal }} flex items-center justify-center">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
                 </div>
@@ -41,6 +80,7 @@
                         async abrirModal() {
                             this.modalOpen = true;
                             this.sucesso = false;
+                            this.dataSelecionada = new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 10);
                             await this.buscarAulas();
                         },
 
@@ -81,7 +121,7 @@
                     <div class="relative z-10">
                         <div class="flex justify-between items-start">
                             <div>
-                                <p class="text-blue-100 text-xs font-medium opacity-80">Hoje é {{ \Carbon\Carbon::now()->locale('pt_BR')->dayName }}</p>
+                                <p class="text-blue-100 text-xs font-medium opacity-80">Hoje, {{ \Carbon\Carbon::now()->locale('pt_BR')->dayName }}</p>
                                 <h3 class="text-xl font-bold mt-1">Registrar Chamada</h3>
                             </div>
                             <div class="bg-white/20 p-2 rounded-lg backdrop-blur-sm">
@@ -126,6 +166,9 @@
                                     </div>
 
                                     <div x-show="sucesso" class="flex flex-col items-center justify-center h-40 text-emerald-500">
+                                        <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-3">
+                                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                        </div>
                                         <span class="font-bold text-lg">Salvo com Sucesso!</span>
                                     </div>
 
@@ -169,11 +212,16 @@
                 <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 p-5 flex items-center justify-between">
                     <div>
                         <p class="text-xs font-bold text-gray-400 uppercase tracking-wider">Em Risco</p>
-                        <h3 class="text-3xl font-extrabold text-gray-800 dark:text-gray-200 mt-1">OK</h3>
-                        <p class="text-[10px] text-emerald-500 mt-1 font-bold">Nenhuma reprovação</p>
+                        @if($materiasEmRisco > 0)
+                            <h3 class="text-3xl font-extrabold text-red-600 dark:text-red-400 mt-1">{{ $materiasEmRisco }}</h3>
+                            <p class="text-[10px] text-red-400 mt-1 font-bold">Matérias reprovando</p>
+                        @else
+                            <h3 class="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-1">OK</h3>
+                            <p class="text-[10px] text-emerald-500 mt-1 font-bold">Nenhuma reprovação</p>
+                        @endif
                     </div>
-                    <div class="w-12 h-12 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center text-gray-400">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <div class="w-12 h-12 rounded-full {{ $materiasEmRisco > 0 ? 'bg-red-50 dark:bg-red-900/30 text-red-500' : 'bg-gray-50 dark:bg-gray-700 text-gray-400' }} flex items-center justify-center">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                     </div>
                 </div>
             </div>
@@ -186,24 +234,22 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 @forelse($disciplinas as $disciplina)
                     @php
-                        // CÁLCULO DA PORCENTAGEM DE PRESENÇA
                         $totalRegistros = $disciplina->frequencias->count();
                         $totalFaltas = $disciplina->frequencias->where('presente', false)->count();
                         
-                        $porcentagem = 100; // Padrão se não tiver registros
+                        $porcentagem = 100;
                         if ($totalRegistros > 0) {
                             $porcentagem = round((($totalRegistros - $totalFaltas) / $totalRegistros) * 100);
                         }
 
-                        // Lógica de Cor da Barra
-                        $corBarra = 'bg-emerald-500'; // Verde
+                        $corBarra = 'bg-emerald-500';
                         $corTexto = 'text-emerald-600 dark:text-emerald-400';
                         
                         if($porcentagem < 75) {
-                            $corBarra = 'bg-red-500'; // Reprovando
+                            $corBarra = 'bg-red-500';
                             $corTexto = 'text-red-600 dark:text-red-400';
                         } elseif($porcentagem < 85) {
-                            $corBarra = 'bg-yellow-500'; // Atenção
+                            $corBarra = 'bg-yellow-500';
                             $corTexto = 'text-yellow-600 dark:text-yellow-400';
                         }
                     @endphp
