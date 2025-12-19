@@ -33,12 +33,8 @@
             <div class="p-6 sm:p-8 bg-white/70 dark:bg-gray-900/70 backdrop-blur-md shadow-sm rounded-[2rem] border border-white/20 dark:border-gray-800">
                 <section>
                     <header class="mb-6">
-                        <h2 class="text-lg font-bold text-gray-900 dark:text-white">
-                            Informações Pessoais
-                        </h2>
-                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                            Atualize seu nome e email de contato.
-                        </p>
+                        <h2 class="text-lg font-bold text-gray-900 dark:text-white">Informações Pessoais</h2>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Atualize seu nome e email de contato.</p>
                     </header>
 
                     <form method="post" action="{{ route('profile.update') }}" class="space-y-6">
@@ -47,28 +43,25 @@
 
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-1">Nome Completo</label>
-                            <input type="text" name="name" value="{{ old('name', $user->name) }}" required autofocus autocomplete="name" 
-                                class="w-full rounded-xl border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-black/20 dark:text-white focus:border-blue-500 focus:ring-blue-500 py-3 px-4 transition-all"
-                            >
+                            <input type="text" name="name" value="{{ old('name', $user->name) }}" required 
+                                class="w-full rounded-2xl border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-black/20 dark:text-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 py-4 px-5 transition-all">
                             <x-input-error class="mt-2" :messages="$errors->get('name')" />
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-1">Email</label>
-                            <input type="email" name="email" value="{{ old('email', $user->email) }}" required autocomplete="username" 
-                                class="w-full rounded-xl border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-black/20 dark:text-white focus:border-blue-500 focus:ring-blue-500 py-3 px-4 transition-all"
-                            >
+                            <input type="email" name="email" value="{{ old('email', $user->email) }}" required 
+                                class="w-full rounded-2xl border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-black/20 dark:text-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 py-4 px-5 transition-all">
                             <x-input-error class="mt-2" :messages="$errors->get('email')" />
                         </div>
 
                         <div class="flex items-center gap-4 pt-2">
-                            <button type="submit" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/30 transition transform active:scale-95 text-sm">
+                            <button type="submit" class="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-xl shadow-blue-500/30 transition transform active:scale-[0.98] text-sm">
                                 Salvar Alterações
                             </button>
-
                             @if (session('status') === 'profile-updated')
-                                <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 2000)" class="text-sm text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 2000)" class="text-sm text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                                     Salvo!
                                 </p>
                             @endif
@@ -80,12 +73,8 @@
             <div class="p-6 sm:p-8 bg-white/70 dark:bg-gray-900/70 backdrop-blur-md shadow-sm rounded-[2rem] border border-white/20 dark:border-gray-800">
                 <section>
                     <header class="mb-6">
-                        <h2 class="text-lg font-bold text-gray-900 dark:text-white">
-                            Segurança
-                        </h2>
-                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                            Certifique-se de usar uma senha longa e segura.
-                        </p>
+                        <h2 class="text-lg font-bold text-gray-900 dark:text-white">Segurança</h2>
+                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Atualize sua senha periodicamente.</p>
                     </header>
 
                     <form method="post" action="{{ route('password.update') }}" class="space-y-6">
@@ -94,38 +83,33 @@
 
                         <div>
                             <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-1">Senha Atual</label>
-                            <input type="password" name="current_password" autocomplete="current-password" 
-                                class="w-full rounded-xl border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-black/20 dark:text-white focus:border-blue-500 focus:ring-blue-500 py-3 px-4"
-                            >
+                            <input type="password" name="current_password" 
+                                class="w-full rounded-2xl border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-black/20 dark:text-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 py-4 px-5">
                             <x-input-error :messages="$errors->updatePassword->get('current_password')" class="mt-2" />
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-1">Nova Senha</label>
-                                <input type="password" name="password" autocomplete="new-password" 
-                                    class="w-full rounded-xl border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-black/20 dark:text-white focus:border-blue-500 focus:ring-blue-500 py-3 px-4"
-                                >
+                                <input type="password" name="password" 
+                                    class="w-full rounded-2xl border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-black/20 dark:text-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 py-4 px-5">
                                 <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2" />
                             </div>
-
                             <div>
                                 <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-1">Confirmar Senha</label>
-                                <input type="password" name="password_confirmation" autocomplete="new-password" 
-                                    class="w-full rounded-xl border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-black/20 dark:text-white focus:border-blue-500 focus:ring-blue-500 py-3 px-4"
-                                >
+                                <input type="password" name="password_confirmation" 
+                                    class="w-full rounded-2xl border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-black/20 dark:text-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 py-4 px-5">
                                 <x-input-error :messages="$errors->updatePassword->get('password_confirmation')" class="mt-2" />
                             </div>
                         </div>
 
                         <div class="flex items-center gap-4 pt-2">
-                            <button type="submit" class="px-6 py-3 bg-gray-800 dark:bg-white dark:text-gray-800 hover:bg-gray-700 dark:hover:bg-gray-200 text-white font-bold rounded-xl shadow-lg transition transform active:scale-95 text-sm">
+                            <button type="submit" class="px-8 py-4 bg-gray-900 dark:bg-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-100 text-white font-bold rounded-2xl shadow-lg transition transform active:scale-[0.98] text-sm">
                                 Atualizar Senha
                             </button>
-
                             @if (session('status') === 'password-updated')
-                                <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 2000)" class="text-sm text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 2000)" class="text-sm text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                                     Senha alterada!
                                 </p>
                             @endif
@@ -134,56 +118,82 @@
                 </section>
             </div>
 
-            <div class="p-6 sm:p-8 bg-red-50/50 dark:bg-red-900/10 backdrop-blur-md shadow-sm rounded-[2rem] border border-red-100 dark:border-red-900/30">
-                <section class="space-y-6">
-                    <header>
-                        <h2 class="text-lg font-bold text-red-600 dark:text-red-400">
-                            Deletar Conta
-                        </h2>
-                        <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                            Uma vez deletada, todos os seus dados (presenças, matérias) serão perdidos permanentemente.
-                        </p>
-                    </header>
-
-                    <button
-                        x-data=""
-                        x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')"
-                        class="px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-lg shadow-red-500/30 transition transform active:scale-95 text-sm"
-                    >
-                        Deletar Minha Conta
+            <div class="p-6 sm:p-8 bg-red-50/80 dark:bg-red-900/20 backdrop-blur-md shadow-sm rounded-[2rem] border border-red-100 dark:border-red-900/30"
+                 x-data="{ confirmDeletion: {{ $errors->userDeletion->isNotEmpty() ? 'true' : 'false' }} }">
+                
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-red-700 dark:text-red-400">Excluir Conta</h2>
+                        <p class="text-sm text-red-600/70 dark:text-red-300/70 mt-1 font-medium">Ação irreversível. Todos os dados serão perdidos.</p>
+                    </div>
+                    
+                    <button @click="confirmDeletion = true" class="w-full sm:w-auto px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-lg shadow-red-500/20 transition transform active:scale-95 text-sm whitespace-nowrap">
+                        Excluir minha conta
                     </button>
+                </div>
 
-                    <x-modal name="confirm-user-deletion" :show="$errors->userDeletion->isNotEmpty()" focusable>
-                        <form method="post" action="{{ route('profile.destroy') }}" class="p-6 dark:bg-gray-900">
-                            @csrf
-                            @method('delete')
+                <template x-teleport="body">
+                    <div x-show="confirmDeletion" style="display: none;" class="fixed inset-0 z-[99] flex items-end md:items-center justify-center p-0 md:p-4">
+                        
+                        <div x-show="confirmDeletion" 
+                             x-transition:enter="transition ease-out duration-300"
+                             x-transition:enter-start="opacity-0"
+                             x-transition:enter-end="opacity-100"
+                             x-transition:leave="transition ease-in duration-200"
+                             x-transition:leave-start="opacity-100"
+                             x-transition:leave-end="opacity-0"
+                             @click="confirmDeletion = false" 
+                             class="absolute inset-0 bg-gray-900/80 backdrop-blur-sm">
+                        </div>
 
-                            <h2 class="text-lg font-bold text-gray-900 dark:text-white">
-                                Tem certeza que deseja sair?
-                            </h2>
-
-                            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
-                                Digite sua senha para confirmar a exclusão definitiva da conta.
-                            </p>
-
-                            <div class="mt-6">
-                                <label for="password" class="sr-only">Password</label>
-                                <input id="password" name="password" type="password" placeholder="Sua senha" class="w-full rounded-xl border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-white py-3 px-4 focus:ring-red-500 focus:border-red-500" />
-                                <x-input-error :messages="$errors->userDeletion->get('password')" class="mt-2" />
+                        <div x-show="confirmDeletion"
+                             x-transition:enter="transition ease-out duration-300"
+                             x-transition:enter-start="translate-y-full md:opacity-0 md:scale-95 md:translate-y-0"
+                             x-transition:enter-end="translate-y-0 md:opacity-100 md:scale-100"
+                             x-transition:leave="transition ease-in duration-200"
+                             x-transition:leave-start="translate-y-0 md:opacity-100 md:scale-100"
+                             x-transition:leave-end="translate-y-full md:opacity-0 md:scale-95 md:translate-y-0"
+                             class="relative w-full md:max-w-lg bg-white dark:bg-gray-900 rounded-t-[2.5rem] md:rounded-[2.5rem] shadow-2xl border-t border-white/20 dark:border-gray-700 transform transition-all flex flex-col max-h-[85vh] overflow-y-auto">
+                            
+                            <div class="sticky top-0 bg-white dark:bg-gray-900 pt-4 pb-2 z-10 flex justify-center md:hidden" @click="confirmDeletion = false">
+                                <div class="w-12 h-1.5 bg-gray-300 dark:bg-gray-700 rounded-full"></div>
                             </div>
 
-                            <div class="mt-6 flex justify-end gap-3">
-                                <button type="button" x-on:click="$dispatch('close')" class="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg font-bold hover:bg-gray-200 transition">
-                                    Cancelar
-                                </button>
+                            <div class="p-8 pt-2 md:p-10 md:pt-10">
+                                <div class="text-center md:text-left mb-8">
+                                    <div class="w-16 h-16 bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded-2xl flex items-center justify-center mx-auto md:mx-0 mb-5 shadow-inner">
+                                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                    </div>
+                                    <h2 class="text-2xl font-bold text-gray-900 dark:text-white leading-tight">Excluir conta permanentemente?</h2>
+                                    <p class="mt-2 text-base text-gray-500 dark:text-gray-400 leading-relaxed">
+                                        Esta ação é <strong>irreversível</strong>. Todos os seus dados, frequências e histórico serão apagados para sempre.
+                                    </p>
+                                </div>
 
-                                <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 shadow-lg shadow-red-500/30 transition">
-                                    Deletar Conta
-                                </button>
+                                <form method="post" action="{{ route('profile.destroy') }}" class="space-y-6">
+                                    @csrf
+                                    @method('delete')
+
+                                    <div>
+                                        <label for="password_del" class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-1">Confirme sua senha</label>
+                                        <input id="password_del" name="password" type="password" placeholder="Senha atual" class="w-full rounded-2xl border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-black/30 dark:text-white py-4 px-5 focus:ring-4 focus:ring-red-500/20 focus:border-red-500 text-lg transition-all" autofocus />
+                                        <x-input-error :messages="$errors->userDeletion->get('password')" class="mt-2" />
+                                    </div>
+
+                                    <div class="flex flex-col gap-3 pt-2">
+                                        <button type="submit" class="w-full py-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-2xl shadow-xl shadow-red-500/20 transition transform active:scale-[0.98] text-lg flex items-center justify-center gap-2">
+                                            <span>Sim, excluir permanentemente</span>
+                                        </button>
+
+                                        <button type="button" @click="confirmDeletion = false" class="w-full py-4 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 font-bold rounded-2xl hover:bg-gray-200 dark:hover:bg-gray-700 transition active:scale-[0.98]">
+                                            Cancelar
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
-                        </form>
-                    </x-modal>
-                </section>
+                        </div>
+                    </div>
+                </template>
             </div>
 
         </div>
