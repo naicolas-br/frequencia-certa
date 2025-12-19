@@ -52,15 +52,15 @@ O objetivo é evitar reprovações por falta e garantir a manutenção de benef�
 - [x] Criar repositório e configurar Git.
 - [x] Instalar Laravel e configurar ambiente (`.env`).
 - [x] **Banco de Dados:** Criar Migrations (Users, Disciplinas, Frequencias).
-- [x +/-] **Banco de Dados:** Criar Models e Relationships.
+- [x] **Banco de Dados:** Criar Models e Relationships.
 - [x] **API:** Criar Controllers básicos (CRUD Disciplinas).
-- [ ] Implementar Autenticação (Laravel Breeze/Sanctum).
+- [x] Implementar Autenticação (Laravel Breeze/Sanctum).
 
 ### 🎨 Fase 2: Front-end & Interface (11/12 - 20/12)
 - [x] Definir Paleta de Cores e Identidade Visual.
 - [x] **Tela Login/Cadastro:** Criar layout responsivo.
-- [ ] **Tela Grade (Web):** Criar tabela de horários desktop.
-- [ ] **Tela Grade (Mobile):** Criar sistema de abas por dia da semana.
+- [x] **Tela Grade (Web):** Criar tabela de horários desktop.
+- [x] **Tela Grade (Mobile):** Criar sistema de abas por dia da semana.
 - [x] **Componentes:** Criar Cards de matéria com indicadores de cor.
 
 ### 🧠 Fase 3: Lógica & Integração (21/12 - 05/01)
