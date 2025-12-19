@@ -31,6 +31,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
     // Salvar horário
     Route::post('/disciplinas/{id}/horarios', [GradeHorariaController::class, 'store'])->name('grade.store');
+
+    // Editar e Atualizar Horário Específico
+    Route::get('/grade/{id}/editar', [GradeHorariaController::class, 'edit'])->name('grade.edit');
+    Route::put('/grade/{id}', [GradeHorariaController::class, 'update'])->name('grade.update');
     
     // Apagar horário
     Route::delete('/grade/{id}', [GradeHorariaController::class, 'destroy'])->name('grade.destroy');
