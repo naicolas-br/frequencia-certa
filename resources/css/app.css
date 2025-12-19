@@ -1,3 +1,91 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* =========================================
+   DRIVER.JS THEME OVERRIDE (Design System)
+   ========================================= */
+
+/* 1. O Container do Popover (Card) */
+.driver-popover {
+    background-color: rgba(255, 255, 255, 0.85) !important; /* Vidro Light */
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    border-radius: 1.5rem !important; /* rounded-3xl */
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+    padding: 1.5rem !important;
+    color: #1f2937 !important; /* text-gray-800 */
+    max-width: 320px !important; /* Mobile friendly */
+}
+
+/* Dark Mode (Via classe .dark no html) */
+.dark .driver-popover {
+    background-color: rgba(17, 24, 39, 0.85) !important; /* Vidro Dark (gray-900) */
+    border-color: rgba(255, 255, 255, 0.1) !important;
+    color: #f3f4f6 !important; /* text-gray-100 */
+}
+
+/* 2. Título e Texto */
+.driver-popover-title {
+    font-size: 1.125rem !important; /* text-lg */
+    font-weight: 700 !important;
+    margin-bottom: 0.5rem !important;
+    line-height: 1.3 !important;
+}
+
+.driver-popover-description {
+    font-size: 0.95rem !important; /* text-sm+ */
+    line-height: 1.5 !important;
+    color: #4b5563 !important; /* text-gray-600 */
+    margin-bottom: 0 !important;
+}
+
+.dark .driver-popover-description {
+    color: #d1d5db !important; /* text-gray-300 */
+}
+
+/* 3. Botões de Navegação (Footer) */
+.driver-popover-footer {
+    margin-top: 1.25rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important; /* Separa "Pular" dos botões */
+}
+
+/* Botão Próximo/Concluir (Primary) */
+.driver-popover-next-btn {
+    background-color: #2563eb !important; /* blue-600 */
+    color: white !important;
+    border: none !important;
+    text-shadow: none !important;
+    border-radius: 0.75rem !important; /* rounded-xl */
+    padding: 0.6rem 1.2rem !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    transition: transform 0.1s !important;
+}
+
+.driver-popover-next-btn:active {
+    transform: scale(0.95) !important;
+}
+
+/* Botão Voltar (Secondary) */
+.driver-popover-prev-btn {
+    background: transparent !important;
+    border: none !important;
+    color: #6b7280 !important; /* gray-500 */
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    padding: 0 0.8rem !important;
+}
+
+.dark .driver-popover-prev-btn {
+    color: #9ca3af !important; /* gray-400 */
+}
+
+
+/* 4. Highlight (Foco) */
+.driver-overlay path {
+    fill: rgba(0, 0, 0, 0.7) !important; /* Overlay mais escuro */
+}

@@ -22,6 +22,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'has_seen_intro',
+        'has_completed_tour',
     ];
 
     /**
@@ -44,6 +46,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'has_seen_intro' => 'boolean',
+            'has_completed_tour' => 'boolean',
         ];
     }
 

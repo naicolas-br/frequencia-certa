@@ -16,6 +16,8 @@ return new class extends Migration
         $table->foreignId('user_id')->constrained()->onDelete('cascade'); // Relaciona ao aluno
         $table->string('nome'); // Ex: Matemática
         $table->string('cor')->default('#1E3A8A'); // Para os cards coloridos (Identidade Visual) [cite: 122]
+        $table->integer('carga_horaria_total')->default(0);
+        $table->integer('porcentagem_minima')->default(75);
         $table->timestamps();
         });
     }

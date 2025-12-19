@@ -21,7 +21,7 @@ class DisciplinaController extends Controller
     }
 
     // 1. Mostra a tela de cadastro
-    public function create()
+    public function criar()
     {
         return view('disciplinas.create');
     }
