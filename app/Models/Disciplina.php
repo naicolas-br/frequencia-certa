@@ -40,9 +40,9 @@ class Disciplina extends Model
     /**
      * Relacionamento 1:N: Uma Disciplina tem vários registros de Frequencia.
      */
-    public function frequencias(): HasMany
+// Relacionamento com Frequências (Faltas/Presenças)
+    public function frequencias()
     {
-        // Usa a foreign key 'disciplina_id' na tabela 'frequencias'
         return $this->hasMany(Frequencia::class);
     }
 }
