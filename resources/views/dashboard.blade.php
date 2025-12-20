@@ -284,70 +284,72 @@
     </div>
 
     @if(Auth::user()->has_seen_intro && !Auth::user()->has_completed_tour)
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const driver = window.driver.js.driver;
-            const isMobile = window.innerWidth < 1024;
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const driver = window.driver.js.driver;
+    const isMobile = window.innerWidth < 1024;
 
-            let tourSteps = [
-                { 
-                    element: '#tour-chamada', 
-                    popover: { 
-                        title: 'Chamada Rápida', 
-                        description: 'Registre sua presença do dia com um clique aqui. O sistema identifica as aulas automaticamente.' 
-                    } 
-                },
-                { 
-                    element: '#tour-status', 
-                    popover: { 
-                        title: 'Seu Painel', 
-                        description: 'Acompanhe sua frequência global e veja alertas de matérias em risco.' 
-                    } 
-                }
-            ];
-
-            if (isMobile) {
-                tourSteps.push(
-                    { element: '#tour-add-mobile', popover: { title: 'Nova Matéria', description: 'Toque no botão central para adicionar suas disciplinas.' } },
-                    { element: '#tour-grade-mobile', popover: { title: 'Sua Grade', description: 'Veja e configure seus horários nesta aba.' } },
-                    { element: '#tour-profile-mobile', popover: { title: 'Seu Perfil', description: 'Gerencie sua conta e configurações aqui.' } }
-                );
-            } else {
-                tourSteps.push(
-                    { element: '#tour-nova-materia', popover: { title: 'Nova Matéria', description: 'Comece clicando aqui para cadastrar disciplinas.' } },
-                    { element: '#tour-grade-desktop', popover: { title: 'Grade Horária', description: 'Acesse a visão completa da sua semana.' } },
-                    { element: '#tour-theme-toggle', popover: { title: 'Modo Noturno', description: 'Prefere estudar à noite? Troque o tema aqui.' } }
-                );
+    let tourSteps = [
+        {
+            element: '#tour-chamada',
+            popover: {
+                title: 'Chamada Rápida',
+                description: 'Registre sua presença do dia com um clique aqui. O sistema identifica as aulas automaticamente.'
             }
+        },
+        {
+            element: '#tour-status',
+            popover: {
+                title: 'Seu Painel',
+                description: 'Acompanhe sua frequência global e veja alertas de matérias em risco.'
+            }
+        },
+        {
+            element: '#tour-theme-toggle',
+            popover: {
+                title: 'Modo Noturno',
+                description: 'Prefere estudar à noite? Troque o tema aqui.'
+            }
+        }
+    ];
 
-            const finalizarTour = () => {
-                fetch('{{ route("tour.finish") }}', {
-                    method: 'POST',
-                    headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Content-Type': 'application/json' }
-                });
-                driverObj.destroy();
-            };
+    if (isMobile) {
+        tourSteps.push(
+            { element: '#tour-add-mobile', popover: { title: 'Nova Matéria', description: 'Toque no botão central para adicionar suas disciplinas.' } },
+            { element: '#tour-grade-mobile', popover: { title: 'Sua Grade', description: 'Veja e configure seus horários nesta aba.' } },
+            { element: '#tour-profile-mobile', popover: { title: 'Seu Perfil', description: 'Gerencie sua conta e configurações aqui.' } }
+        );
+    } else {
+        tourSteps.push(
+            { element: '#tour-nova-materia', popover: { title: 'Nova Matéria', description: 'Comece clicando aqui para cadastrar disciplinas.' } },
+            { element: '#tour-grade-desktop', popover: { title: 'Grade Horária', description: 'Acesse a visão completa da sua semana.' } }
+        );
+    }
 
-            const driverObj = driver({
-                showProgress: true,
-                allowClose: true,
-                animate: true,
-                nextBtnText: 'Próximo',
-                prevBtnText: 'Voltar',
-                doneBtnText: 'Concluir',
-                steps: tourSteps,
-  
-                onDestroyStarted: () => {
-                    finalizarTour();
+    const driverObj = driver({
+        showProgress: true,
+        allowClose: true,
+        animate: true,
+        nextBtnText: 'Próximo',
+        prevBtnText: 'Voltar',
+        doneBtnText: 'Concluir',
+        steps: tourSteps,
+        onDestroyStarted: () => {
+            fetch('{{ route("tour.finish") }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json'
                 }
             });
+            driverObj.destroy();
+        }
+    });
 
-            setTimeout(() => {
-                driverObj.drive();
-            }, 1000);
-        });
-    </script>
-    @endif
+    setTimeout(() => driverObj.drive(), 1000);
+});
+</script>
+@endif
+
 
 </x-app-layout>
