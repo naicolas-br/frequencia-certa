@@ -4,6 +4,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DisciplinaController;
 use App\Http\Controllers\GradeHorariaController;
 use App\Http\Controllers\FrequenciaController;
+use App\Http\Controllers\IntroController;
+use App\Services\CalendarioService;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -45,7 +47,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         if (Auth::user()->has_seen_intro) {
             return redirect()->route('dashboard');
         }
-        return view('intro');
+        return view('intro.index');
     })->name('intro');
 
     // Ação do botão "Começar" (Marca intro como vista)
@@ -113,6 +115,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Rota para EXIBIR o Wizard
+    Route::get('/intro', [IntroController::class, 'index'])->name('intro');
+
+    // Rota para SALVAR os dados e finalizar
+    Route::post('/intro', [IntroController::class, 'store'])->name('intro.store');
 
 });
 
