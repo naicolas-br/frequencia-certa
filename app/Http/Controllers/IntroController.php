@@ -27,6 +27,8 @@ class IntroController extends Controller
         $user = $request->user();
 
         // 1. Salva dados do onboarding
+        $dados = $request->validated();
+
         $user->update([
             'estado' => $request->estado,
             'cidade' => $request->cidade,
