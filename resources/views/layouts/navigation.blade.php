@@ -128,19 +128,37 @@
         </a>
 
         {{-- SAIR --}}
-        <form method="POST" action="{{ route('logout') }}" class="inline-flex flex-col items-center justify-center px-5 hover:bg-gray-50 dark:hover:bg-gray-800 group transition-colors">
+        <form method="POST"
+            action="{{ route('logout') }}"
+            onsubmit="return confirm('Tem certeza que deseja sair da sua conta?')"
+            class="h-full">
             @csrf
-            <button type="submit" class="flex flex-col items-center justify-center w-full h-full">
-                <svg class="w-6 h-6 mb-1 text-gray-500 dark:text-gray-400 group-hover:text-red-600 transition-colors"
-                     fill="none"
-                     stroke="currentColor"
-                     viewBox="0 0 24 24">
+
+            <button type="submit"
+                class="inline-flex flex-col items-center justify-center
+                    px-5 h-full leading-none appearance-none
+                    hover:bg-gray-50 dark:hover:bg-gray-800
+                    group transition-colors">
+
+                <svg class="w-6 h-6 mb-1
+                            text-gray-500 dark:text-gray-400
+                            group-hover:text-red-600 transition-colors"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                 </svg>
-                <span class="text-[10px] text-gray-500 dark:text-gray-400 group-hover:text-red-600 transition-colors">Sair</span>
+
+                <span class="text-[10px]
+                            text-gray-500 dark:text-gray-400
+                            group-hover:text-red-600 transition-colors">
+                    Sair
+                </span>
             </button>
         </form>
+
+
 
     </div>
 </div>

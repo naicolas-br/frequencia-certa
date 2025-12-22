@@ -29,7 +29,7 @@
         }
     @endphp
 
-    <div class="py-6 sm:py-10">
+    <div class="py-6 sm:py-10 pb-24 md:pb-0">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
             
             <div class="flex flex-col md:flex-row justify-between items-end md:items-center gap-4">
