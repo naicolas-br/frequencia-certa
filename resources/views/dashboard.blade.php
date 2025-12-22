@@ -46,8 +46,9 @@
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
                 <div id="tour-chamada" class="lg:col-span-2 relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-blue-600 to-indigo-700 shadow-2xl shadow-blue-900/20 text-white p-6 sm:p-8"
-                     x-data="{ 
+                     x-data="{
                         modalOpen: false, 
+                        modalEvento: false,
                         aulas: [], 
                         loading: false, 
                         enviando: false, 
@@ -91,6 +92,7 @@
                             this.enviando = false;
                         }
                     }"
+                    
                 >
                     <div class="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
                     <div class="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-purple-500/20 rounded-full blur-2xl"></div>
@@ -112,6 +114,12 @@
                         <button @click="abrirModal()" class="mt-8 w-full sm:w-auto bg-white text-blue-600 hover:bg-blue-50 font-bold py-4 px-8 rounded-xl shadow-xl transition-transform active:scale-95 flex items-center justify-center gap-2 group">
                             <span>Abrir Diário de Classe</span>
                             <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                        </button>
+                        <button @click="modalEvento = true" class="mt-3 w-full sm:w-auto bg-white/20 text-white hover:bg-white/30 font-semibold py-3 px-6 rounded-xl transition flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            Marcar Dia Livre
                         </button>
                     </div>
 
@@ -156,6 +164,64 @@
                             </div>
                         </div>
                     </div>
+
+                    <div x-show="modalEvento" style="display: none"
+     class="fixed inset-0 z-50 flex items-center justify-center p-4"
+>
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"
+         @click="modalEvento = false"></div>
+
+    <div class="relative bg-white dark:bg-gray-900 w-full max-w-md rounded-3xl shadow-2xl p-6">
+        <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">
+            Marcar Dia Livre
+        </h3>
+
+        <form method="POST" action="{{ route('eventos.store') }}" class="space-y-4">
+            @csrf
+
+            <div>
+                <label class="block text-sm font-semibold mb-1">Título</label>
+                <input type="text" name="titulo" required
+                       placeholder="Ex: Feriado, Recesso, Falta Justificada"
+                       class="w-full rounded-xl border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white">
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold mb-1">Data</label>
+                <input type="date" name="data" required
+                       class="w-full rounded-xl border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white">
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold mb-1">Tipo</label>
+                <select name="tipo" required
+                        class="w-full rounded-xl border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white">
+                    <option value="sem_aula">Sem Aula</option>
+                    <option value="feriado">Feriado Municipal</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold mb-1">Descrição (opcional)</label>
+                <textarea name="descricao" rows="3"
+                          class="w-full rounded-xl border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white"></textarea>
+            </div>
+
+            <div class="flex gap-3 pt-2">
+                <button type="submit"
+                        class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl">
+                    Salvar
+                </button>
+                <button type="button"
+                        @click="modalEvento = false"
+                        class="flex-1 bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold py-3 rounded-xl">
+                    Cancelar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
                 </div>
 
                 <div id="tour-status" class="grid grid-cols-2 lg:grid-cols-1 gap-4 lg:gap-6">

@@ -5,6 +5,7 @@ use App\Http\Controllers\DisciplinaController;
 use App\Http\Controllers\GradeHorariaController;
 use App\Http\Controllers\FrequenciaController;
 use App\Http\Controllers\IntroController;
+use App\Http\Controllers\EventoController;
 use App\Services\CalendarioService;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
@@ -123,6 +124,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Rota para SALVAR os dados e finalizar
     Route::post('/intro', [IntroController::class, 'store'])->name('intro.store')
         ->middleware('auth');
+
+    // Rota para CRIAR os Eventos
+    Route::middleware(['auth'])->group(function () {
+        Route::post('/eventos/criar', [EventoController::class, 'store'])->name('eventos.store');
+    });
 
 });
 

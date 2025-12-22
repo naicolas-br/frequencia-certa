@@ -5,7 +5,9 @@ namespace App\Services;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
+use App\Models\Evento;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class CalendarioService
 {
@@ -71,7 +73,7 @@ class CalendarioService
     {
         $feriados = [];
 
-    // Invertexto retorna diretamente um array de feriados
+        // Invertexto retorna diretamente um array de feriados
         if (!is_array($dadosApi)) {
             return [];
         }
@@ -80,8 +82,9 @@ class CalendarioService
             $feriados[] = [
                 'nome'      => $feriado['name'] ?? 'Feriado',
                 'data'      => $feriado['date'] ?? null,
-                'tipo'      => $feriado['level'] ?? 'outros', // nacional | estadual
-                'descricao' => $feriado['type'] ?? null,      // feriado | facultativo
+                // Normaliza o tipo aqui para evitar inconsistência depois
+                'tipo'      => $this->normalizarTipo($feriado['level'] ?? null),
+                'descricao' => $feriado['type'] ?? null, // feriado | facultativo
             ];
         }
 
@@ -98,5 +101,45 @@ class CalendarioService
             'state'    => 'estadual',
             default    => 'outros',
         };
+    }
+
+    /**
+     * Verifica se um dia é livre (manual ou feriado)
+     */
+    public function verificarDiaLivre(string $data): ?array
+    {
+        // 1. Prioridade: Verifica se o usuário marcou algo no banco
+        $eventoManual = Evento::where('user_id', Auth::id())
+            ->whereDate('data', $data)
+            ->whereIn('tipo', ['feriado', 'sem_aula'])
+            ->first();
+
+        if ($eventoManual) {
+            return [
+                'titulo' => $eventoManual->titulo,
+                'tipo'   => 'manual',
+                'cor'    => 'bg-purple-100 text-purple-700',
+            ];
+        }
+
+        // 2. Verifica na API (usando seu método cacheado)
+        $ano = Carbon::parse($data)->year;
+        $estado = Auth::user()->estado ?? 'BR'; // fallback seguro
+
+        // Busca a lista completa do ano/estado
+        $feriados = $this->obterFeriados($estado, $ano);
+
+        // Filtra para ver se a data bate com algum feriado
+        foreach ($feriados as $feriado) {
+            if ($feriado['data'] === $data) {
+                return [
+                    'titulo' => $feriado['nome'],
+                    'tipo'   => $feriado['tipo'],
+                    'cor'    => 'bg-red-100 text-red-700',
+                ];
+            }
+        }
+
+        return null;
     }
 }
