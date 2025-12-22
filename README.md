@@ -67,7 +67,7 @@ O objetivo é evitar reprovações por falta e garantir a manutenção de benef�
 - [x] **Lógica:** Algoritmo de cálculo de % de frequência.
 - [ ] **Lógica:** Sistema de projeção de dias letivos.
 - [x] Conectar Front-end com a API (Axios/Fetch).
-- [ ] Implementar funcionalidade "Marcar Feriado/Sem Aula".
+- [x] Implementar funcionalidade "Marcar Feriado/Sem Aula".
 - [x] Implementar funcionalidade "Registrar Presença".
 
 ### 📱 Fase 4: PWA & Finalização (06/01 - 01/02)
