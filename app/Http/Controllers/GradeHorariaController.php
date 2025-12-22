@@ -75,7 +75,10 @@ class GradeHorariaController extends Controller
             'horario_fim' => $request->horario_fim,
         ]);
 
-        return back()->with('success', 'Horário adicionado com sucesso!');
+        return back()->with('toast', [
+            'type' => 'success',
+            'message' => 'Horário cadastrado com sucesso!'
+        ]);
     }
 
     /**
@@ -117,7 +120,10 @@ class GradeHorariaController extends Controller
         // Redireciona de volta para a lista daquela disciplina
         return redirect()
             ->route('grade.index', $horario->disciplina_id)
-            ->with('success', 'Horário atualizado com sucesso!');
+            ->with('toast', [
+                'type' => 'success',
+                'message' => 'Horário atualizado com sucesso!'
+            ]);
     }
 
     /**
@@ -133,6 +139,9 @@ class GradeHorariaController extends Controller
         
         // Redireciona mantendo na página da disciplina, se possível
         return redirect()->route('grade.index', $disciplinaId)
-            ->with('success', 'Horário removido.');
+            ->with('toast', [
+                'type' => 'success',
+                'message' => 'Horário removido com sucesso!'
+            ]);
     }
 }

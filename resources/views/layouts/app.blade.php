@@ -43,5 +43,43 @@
                 {{ $slot }}
             </main>
         </div>
+
+        {{-- GLOBAL TOAST --}}
+    @if(session('toast'))
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toast = @json(session('toast'));
+
+            switch (toast.type) {
+                case 'success':
+                    toastSuccess(toast.message);
+                    break;
+                case 'error':
+                    toastError(toast.message);
+                    break;
+                case 'warning':
+                    toastWarning(toast.message);
+                    break;
+                default:
+                    toastInfo(toast.message);
+            }
+        });
+    </script>
+    @endif
+
+    @if(session('swal'))
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const swal = @json(session('swal'));
+
+        swalTailwind.fire({
+            icon: swal.icon ?? 'info',
+            title: swal.title ?? '',
+            text: swal.text ?? '',
+            confirmButtonText: 'Entendi'
+        });
+    });
+</script>
+@endif
     </body>
 </html>

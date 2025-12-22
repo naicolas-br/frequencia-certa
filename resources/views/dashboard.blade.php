@@ -443,28 +443,4 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 @endif
 
-@if(session('toast'))
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const toast = @json(session('toast'));
-
-        switch (toast.type) {
-            case 'success':
-                toastSuccess(toast.message);
-                break;
-            case 'error':
-                toastError(toast.message);
-                break;
-            case 'warning':
-                toastWarning(toast.message);
-                break;
-            default:
-                toastInfo(toast.message);
-        }
-    });
-</script>
-@endif
-
-
-
 </x-app-layout>

@@ -22,8 +22,10 @@ public function store(Request $request)
         ->exists();
 
     if ($jaExiste) {
-        return redirect()->back()
-            ->withErrors(['data' => 'Você já marcou um evento neste dia.']);
+        return redirect()->back()->with('swal', [
+            'icon' => 'error', // SweetAlert 
+            'title' => 'Erro!',
+            'text' => 'Já existe um dia livre cadastrado para essa data.']);
     }
 
     Evento::create([
@@ -34,7 +36,10 @@ public function store(Request $request)
         'descricao' => $validated['descricao'] ?? null,
     ]);
 
-    return redirect()->back()->with('success', 'Dia livre marcado com sucesso!');
+    return redirect()->back()->with('toast', [
+        'type' => 'success',
+        'message' => 'Dia livre cadastrado com sucesso!'
+    ]);
 }
 
 }

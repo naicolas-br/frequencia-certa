@@ -104,7 +104,7 @@
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                                     </a>
 
-                                    <form action="{{ route('grade.destroy', $horario->id) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja apagar este horário?');">
+                                    <form action="{{ route('grade.destroy', $horario->id) }}" method="POST" data-confirm="Tem certeza que deseja apagar este horário?">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="p-3 text-red-400 hover:text-red-600 bg-red-50/50 dark:bg-red-900/10 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-2xl transition-colors border border-transparent hover:border-red-200 dark:hover:border-red-800" title="Excluir Horário">
