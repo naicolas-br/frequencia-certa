@@ -125,10 +125,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/intro', [IntroController::class, 'store'])->name('intro.store')
         ->middleware('auth');
 
-    // Rota para CRIAR os Eventos
-    Route::middleware(['auth'])->group(function () {
-        Route::post('/eventos/criar', [EventoController::class, 'store'])->name('eventos.store');
-    });
+    // EVENTOS / DIAS LIVRES (CRUD COMPLETO)
+    Route::get('/eventos', [EventoController::class, 'index'])->name('eventos.index');
+    Route::get('/eventos/{evento}/editar', [EventoController::class, 'edit'])->name('eventos.edit');
+    Route::put('/eventos/{evento}', [EventoController::class, 'update'])->name('eventos.update');
+    Route::delete('/eventos/{evento}', [EventoController::class, 'destroy'])->name('eventos.destroy');
+
 
 });
 
