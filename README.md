@@ -5,7 +5,7 @@
 ![PWA](https://img.shields.io/badge/PWA-Ready-5A0FC8?style=flat&logo=pwa&logoColor=white)
 ![PHP](https://img.shields.io/badge/PHP-8.1+-777BB4?style=flat&logo=php&logoColor=white)
 
-> **Sistema de Gestão e Controle de Frequência Escolar com foco no programa Pé-de-Meia.**
+> **Sistema de Gestão e Controle de Frequência Escolar.**
 
 ---
 
@@ -18,8 +18,16 @@ O objetivo é evitar reprovações por falta e garantir a manutenção de benef�
 ### 🚀 Principais Funcionalidades
 - **Mobile First:** Funciona como App no celular (PWA) e no computador.
 - **Grade Dinâmica:** O aluno monta seu horário semanal.
-- **Cálculo Automático:** Projeção de faltas permitidas baseada no calendário letivo.
+- **Cálculo Automático:** Acompanhamento da frequência escolar com base na grade do aluno, registros de presença e dias não letivos.
 - **Alertas Visuais:** Cores (Verde/Amarelo/Vermelho) indicando risco de reprovação.
+
+---
+
+## 📌 Delimitação de Escopo
+
+Este projeto tem como objetivo fornecer uma ferramenta de apoio ao estudante para acompanhamento pessoal de sua frequência escolar.
+
+O sistema **não substitui** o diário oficial das instituições de ensino e **não realiza validações legais** relacionadas a calendário escolar oficial, carga horária anual ou projeção obrigatória de dias letivos, por se tratar de um projeto acadêmico (TCC).
 
 ---
 
@@ -65,7 +73,7 @@ O objetivo é evitar reprovações por falta e garantir a manutenção de benef�
 
 ### 🧠 Fase 3: Lógica & Integração (21/12 - 05/01)
 - [x] **Lógica:** Algoritmo de cálculo de % de frequência.
-- [ ] **Lógica:** Sistema de projeção de dias letivos.
+- 💡 ~~**Lógica:** Sistema de projeção de dias letivos~~ *(estudo conceitual – fora do escopo da versão final do TCC)*.
 - [x] Conectar Front-end com a API (Axios/Fetch).
 - [x] Implementar funcionalidade "Marcar Feriado/Sem Aula".
 - [x] Implementar funcionalidade "Registrar Presença".
@@ -108,7 +116,22 @@ php artisan migrate
 php artisan serve
 npm run dev
 ```
+---
+## ⚠️ Disclaimer
+
+Este sistema foi desenvolvido **exclusivamente para fins acadêmicos**, como parte de um Trabalho de Conclusão de Curso (TCC).
+
+As informações de frequência apresentadas pelo sistema representam **estimativas baseadas na grade horária definida pelo estudante, nos registros de presença realizados e nos dias não letivos informados**, não devendo ser interpretadas como registros oficiais ou documentos válidos para comprovação institucional.
+
+O projeto **não substitui** sistemas oficiais de controle escolar, diários de classe ou registros administrativos das instituições de ensino.
+
+
+
 ## 📄 Licença
 Este projeto está sob a licença MIT. Consulte o arquivo LICENSE para mais detalhes.
 
-Desenvolvido para o TCC do Curso Técnico em Desenvolvimento de Sistemas - 2025/2026.
+---
+
+Desenvolvido como Trabalho de Conclusão de Curso (TCC) do Curso Técnico em Desenvolvimento de Sistemas – 2025/2026.  
+
+Projeto de caráter acadêmico e demonstrativo.
