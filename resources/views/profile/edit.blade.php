@@ -38,35 +38,56 @@
                     </header>
 
                     <form method="post" action="{{ route('profile.update') }}" class="space-y-6">
-                        @csrf
-                        @method('patch')
+    @csrf
+    @method('patch')
 
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-1">Nome Completo</label>
-                            <input type="text" name="name" value="{{ old('name', $user->name) }}" required 
-                                class="w-full rounded-2xl border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-black/20 dark:text-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 py-4 px-5 transition-all">
-                            <x-input-error class="mt-2" :messages="$errors->get('name')" />
-                        </div>
+    {{-- Nome --}}
+    <div>
+        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-1">Nome Completo</label>
+        <input type="text" name="name" value="{{ old('name', $user->name) }}" required 
+            class="w-full rounded-2xl border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-black/20 dark:text-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 py-4 px-5 transition-all">
+        <x-input-error class="mt-2" :messages="$errors->get('name')" />
+    </div>
 
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-1">Email</label>
-                            <input type="email" name="email" value="{{ old('email', $user->email) }}" required 
-                                class="w-full rounded-2xl border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-black/20 dark:text-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 py-4 px-5 transition-all">
-                            <x-input-error class="mt-2" :messages="$errors->get('email')" />
-                        </div>
+    {{-- Email --}}
+    <div>
+        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-1">Email</label>
+        <input type="email" name="email" value="{{ old('email', $user->email) }}" required 
+            class="w-full rounded-2xl border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-black/20 dark:text-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 py-4 px-5 transition-all">
+        <x-input-error class="mt-2" :messages="$errors->get('email')" />
+    </div>
 
-                        <div class="flex items-center gap-4 pt-2">
-                            <button type="submit" class="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-xl shadow-blue-500/30 transition transform active:scale-[0.98] text-sm">
-                                Salvar Alterações
-                            </button>
-                            @if (session('status') === 'profile-updated')
-                                <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 2000)" class="text-sm text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                                    Salvo!
-                                </p>
-                            @endif
-                        </div>
-                    </form>
+<div>
+    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 ml-1">Estado (UF)</label>
+    <div class="relative">
+        <select name="estado" class="w-full rounded-2xl border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-black/20 dark:text-white focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 py-4 px-5 transition-all appearance-none">
+            @foreach($estados as $sigla => $nome)
+                <option value="{{ $sigla }}" {{ old('estado', $user->estado) === $sigla ? 'selected' : '' }}>
+                    {{ $nome }} - {{ $sigla }}
+                </option>
+            @endforeach
+        </select>
+        <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-gray-500">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </div>
+    </div>
+    <x-input-error class="mt-2" :messages="$errors->get('estado')" />
+</div>
+
+
+    {{-- Botão Salvar --}}
+    <div class="flex items-center gap-4 pt-2">
+        <button type="submit" class="px-8 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-xl shadow-blue-500/30 transition transform active:scale-[0.98] text-sm">
+            Salvar Alterações
+        </button>
+        @if (session('status') === 'profile-updated')
+            <p x-data="{ show: true }" x-show="show" x-transition x-init="setTimeout(() => show = false, 2000)" class="text-sm text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                Salvo!
+            </p>
+        @endif
+    </div>
+</form>
                 </section>
             </div>
 

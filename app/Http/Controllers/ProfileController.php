@@ -16,8 +16,11 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $estados = config('estados');
+
         return view('profile.edit', [
             'user' => $request->user(),
+            'estados' => $estados,
         ]);
     }
 
