@@ -6,7 +6,7 @@ return [
     'accepted'               => 'O campo :attribute deve ser aceito.',
     'accepted_if'            => 'O :attribute deve ser aceito quando :other for :value.',
     'active_url'             => 'O campo :attribute não contém uma URL válida.',
-    'after'                  => 'O campo :attribute deve conter uma data posterior a :date.',
+    'after'                  => 'A data informada no Término das Aulas deve ser uma data maior que a do Início das Aulas.',
     'after_or_equal'         => 'O campo :attribute deve conter uma data posterior ou igual a :date.',
     'alpha'                  => 'O campo :attribute deve conter apenas letras.',
     'alpha_dash'             => 'O campo :attribute deve conter apenas letras, números e traços.',

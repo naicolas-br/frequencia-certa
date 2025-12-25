@@ -18,7 +18,7 @@ O objetivo é evitar reprovações por falta e garantir a manutenção de benef�
 ### 🚀 Principais Funcionalidades
 - **Mobile First:** Funciona como App no celular (PWA) e no computador.
 - **Grade Dinâmica:** O aluno monta seu horário semanal.
-- **Cálculo Automático:** Acompanhamento da frequência escolar com base na grade do aluno, registros de presença e dias não letivos.
+- **Cálculo Automático:** Projeção de faltas permitidas baseada no calendário letivo.
 - **Alertas Visuais:** Cores (Verde/Amarelo/Vermelho) indicando risco de reprovação.
 
 ---
@@ -73,7 +73,7 @@ O sistema **não substitui** o diário oficial das instituições de ensino e **
 
 ### 🧠 Fase 3: Lógica & Integração (21/12 - 05/01)
 - [x] **Lógica:** Algoritmo de cálculo de % de frequência.
-- [ ] ~~**Lógica:** Sistema de projeção de dias letivos~~ *(estudo conceitual – fora do escopo da versão final do TCC)*.
+- [x] **Lógica:** Sistema de projeção de dias letivos
 - [x] Conectar Front-end com a API (Axios/Fetch).
 - [x] Implementar funcionalidade "Marcar Feriado/Sem Aula".
 - [x] Implementar funcionalidade "Registrar Presença".

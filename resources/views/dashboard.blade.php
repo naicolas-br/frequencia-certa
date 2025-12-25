@@ -180,8 +180,7 @@
                                     <div x-show="sucesso" class="flex flex-col items-center justify-center h-40 text-emerald-500"><div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-3"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div><span class="font-bold text-lg">Salvo com Sucesso!</span></div>
                                     <div x-show="!loading && !sucesso">
                                         <div x-show="aulas.length === 0 && !loading" class="text-center py-10 text-gray-400 text-sm">
-                                            <!-- Dia livre -->
-                                             <p x-show="diaLivre">
+                                            <p x-show="diaLivre">
                                                 Dia livre — Nenhuma aula neste dia 🎉
                                             </p>
                                             <p x-show="!diaLivre">
@@ -318,6 +317,12 @@
                             if ($totalRegistros > 0) {
                                 $porcentagem = round((($totalRegistros - $totalFaltas) / $totalRegistros) * 100);
                             }
+                            
+                            // CÁLCULO DE PROJEÇÃO DE AULAS
+                            $totalPrevisto = $disciplina->total_aulas_previstas;
+                            $limiteFaltas = floor($totalPrevisto * 0.25);
+                            $restantes = $limiteFaltas - $totalFaltas;
+
                             $corBarra = 'bg-emerald-500';
                             $corTexto = 'text-emerald-600 dark:text-emerald-400';
                             if($porcentagem < 75) {
@@ -337,11 +342,31 @@
                                     <h4 class="text-lg font-bold text-gray-900 dark:text-white truncate pr-4 leading-tight">
                                         {{ $disciplina->nome }}
                                     </h4>
+
+                                    {{-- EXIBIÇÃO DE FALTAS E PROJEÇÃO --}}
                                     <div class="flex flex-col items-end">
+                                        {{-- Número Grande das Faltas --}}
                                         <span class="text-3xl font-extrabold text-gray-900 dark:text-white leading-none tracking-tighter">
                                             {{ $totalFaltas }}
+                                            
+                                            {{-- Mostra o Limite (ex: "/ 20") se houver previsão --}}
+                                            @if($totalPrevisto > 0)
+                                                <span class="text-sm text-gray-400 font-normal" title="Limite de faltas (25% de {{ $totalPrevisto }} aulas)">
+                                                    /{{ $limiteFaltas }}
+                                                </span>
+                                            @endif
                                         </span>
-                                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Faltas</span>
+                                        
+                                        {{-- Texto Pequeno abaixo do número --}}
+                                        @if($totalPrevisto > 0)
+                                            {{-- Mostra quantas faltas restam --}}
+                                            <span class="text-[10px] font-bold {{ $restantes < 3 ? 'text-red-500 animate-pulse' : 'text-gray-400' }} uppercase tracking-wide">
+                                                {{ $restantes >= 0 ? 'Faltas restantes: ' . $restantes : 'Reprovado' }}
+                                            </span>
+                                        @else
+                                            {{-- Fallback: Se não tiver datas cadastradas, mostra só "Faltas" --}}
+                                            <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wide">Faltas</span>
+                                        @endif
                                     </div>
                                 </div>
 
