@@ -29,13 +29,23 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
+        $user->fill($request->validated());
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
 
-        $request->user()->save();
+        // Verifica se as datas do ano letivo mudaram
+        if ($user->isDirty(['ano_letivo_inicio', 'ano_letivo_fim'])) {
+            // Sincroniza todas as disciplinas existentes com as novas datas
+            $user->disciplinas()->update([
+                'data_inicio' => $user->ano_letivo_inicio,
+                'data_fim'    => $user->ano_letivo_fim,
+            ]);
+        }
+
+        $user->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
