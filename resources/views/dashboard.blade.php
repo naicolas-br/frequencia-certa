@@ -27,7 +27,23 @@
                 $materiasEmRisco++;
             }
         }
-    @endphp
+
+        // DADOS PARA OS GRÁFICOS (Somente Web)
+        $graficoLabels = $disciplinas->pluck('nome')->toArray();
+        $graficoDados = $disciplinas->map(function($d) {
+            $t = $d->frequencias->count();
+            $f = $d->frequencias->where('presente', false)->count();
+            return $t > 0 ? round((($t - $f) / $t) * 100) : 100;
+        })->toArray();
+        
+        // Cores dinâmicas para o gráfico (Verde se > 75, Vermelho se < 75)
+        $graficoCores = array_map(function($val) {
+            return $val >= 75 ? 'rgba(16, 185, 129, 0.7)' : 'rgba(239, 68, 68, 0.7)'; // Emerald vs Red
+        }, $graficoDados);
+        
+        // Dados para o Gráfico de Rosca (Global)
+        $totalPresencasGeral = $todasFrequencias->where('presente', true)->count();
+        @endphp
 
     <div class="py-6 sm:py-10 pb-24 md:pb-0">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
@@ -292,6 +308,28 @@
                 </div>
             </div>
 
+            @if($disciplinas->isNotEmpty())
+                {{-- SEÇÃO DE GRÁFICOS (VISÍVEL APENAS NO DESKTOP) --}}
+                <div class="hidden lg:block animate-fade-in-up animation-delay-500">
+                    <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-6 px-1">Análise de Desempenho</h3>
+                    
+                    <div class="grid grid-cols-3 gap-6">
+                        {{-- Gráfico de Barras: Desempenho por Matéria --}}
+                        <div class="col-span-2 bg-white/60 dark:bg-gray-900/60 backdrop-blur-xl rounded-[2rem] border border-white/20 dark:border-gray-800 p-6 shadow-sm">
+                            <canvas id="barChart" height="150"></canvas>
+                        </div>
+
+                        {{-- Gráfico de Rosca: Visão Geral --}}
+                        <div class="bg-white/60 dark:bg-gray-900/60 backdrop-blur-xl rounded-[2rem] border border-white/20 dark:border-gray-800 p-6 shadow-sm flex flex-col items-center justify-center relative">
+                            <h4 class="absolute top-6 left-6 text-xs font-bold text-gray-400 uppercase tracking-widest">Resumo Global</h4>
+                            <div class="w-full h-full flex items-center justify-center mt-4">
+                                <canvas id="doughnutChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             <div>
                 <div class="flex items-center justify-between px-1 mb-6">
                     <h3 class="text-lg font-bold text-gray-900 dark:text-white">Minhas Matérias</h3>
@@ -413,72 +451,185 @@
         </div>
     </div>
 
-    @if(Auth::user()->has_seen_intro && !Auth::user()->has_completed_tour)
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const driver = window.driver.js.driver;
-    const isMobile = window.innerWidth < 1024;
+@if($disciplinas->isNotEmpty())
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const ctxBar = document.getElementById('barChart');
+        const ctxDoughnut = document.getElementById('doughnutChart');
 
-    let tourSteps = [
-        {
-            element: '#tour-chamada',
-            popover: {
-                title: 'Diário de Classe',
-                description: 'Registre sua presença do dia com um clique. Ou, marque um dia livre.'
-            }
-        },
-        {
-            element: '#tour-status',
-            popover: {
-                title: 'Seu Painel',
-                description: 'Acompanhe sua frequência global e veja alertas de matérias em risco.'
-            }
-        },
-        {
-            element: '#tour-theme-toggle',
-            popover: {
-                title: 'Modo Noturno',
-                description: 'Prefere estudar à noite? Troque o tema aqui.'
-            }
-        }
-    ];
+        if (!ctxBar || !ctxDoughnut) return;
 
-    if (isMobile) {
-        tourSteps.push(
-            { element: '#tour-add-mobile', popover: { title: 'Adicione uma Matéria', description: 'Toque no botão central para adicionar suas disciplinas.' } },
-            { element: '#tour-grade-mobile', popover: { title: 'Sua Grade', description: 'Veja seus horários nesta aba.' } },
-            { element: '#tour-profile-mobile', popover: { title: 'Seu Perfil', description: 'Gerencie sua conta e outras configurações aqui.' } }
-        );
-    } else {
-        tourSteps.push(
-            { element: '#tour-nova-materia', popover: { title: 'Adicione uma Matéria', description: 'Comece clicando aqui para cadastrar disciplinas.' } },
-            { element: '#tour-grade-desktop', popover: { title: 'Grade Horária', description: 'Acesse a visão completa da sua semana.' } }
-        );
-    }
+        let barChartInstance = null;
+        let doughnutChartInstance = null;
 
-    const driverObj = driver({
-        showProgress: true,
-        allowClose: true,
-        animate: true,
-        nextBtnText: 'Próximo',
-        prevBtnText: 'Voltar',
-        doneBtnText: 'Concluir',
-        steps: tourSteps,
-        onDestroyStarted: () => {
-            fetch('{{ route("tour.finish") }}', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Content-Type': 'application/json'
+        function createCharts() {
+            const isDark = document.documentElement.classList.contains('dark');
+
+            const textColor = isDark ? '#9CA3AF' : '#4B5563';
+            const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
+
+            // Destroi instâncias anteriores
+            if (barChartInstance) barChartInstance.destroy();
+            if (doughnutChartInstance) doughnutChartInstance.destroy();
+
+            // GRÁFICO DE BARRAS
+            barChartInstance = new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: @json($graficoLabels),
+                    datasets: [{
+                        label: 'Frequência (%)',
+                        data: @json($graficoDados),
+                        backgroundColor: @json($graficoCores),
+                        borderRadius: 6,
+                        barThickness: 25
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: isDark ? '#1F2937' : '#fff',
+                            titleColor: isDark ? '#fff' : '#111',
+                            bodyColor: isDark ? '#fff' : '#111',
+                            borderColor: isDark ? '#374151' : '#E5E7EB',
+                            borderWidth: 1,
+                            padding: 10,
+                            callbacks: {
+                                label: ctx => `${ctx.raw}% de Presença`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: { color: gridColor },
+                            ticks: { color: textColor, font: { size: 10 } }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: textColor, font: { size: 10 } }
+                        }
+                    }
                 }
             });
-            driverObj.destroy();
-        }
-    });
 
-    setTimeout(() => driverObj.drive(), 1000);
-});
-</script>
+            // GRÁFICO DE ROSCA
+            doughnutChartInstance = new Chart(ctxDoughnut, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Presenças', 'Faltas'],
+                    datasets: [{
+                        data: [{{ $totalPresencasGeral }}, {{ $totalFaltasGeral }}],
+                        backgroundColor: [
+                            'rgba(16,185,129,0.8)',
+                            'rgba(239,68,68,0.8)'
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '75%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: textColor,
+                                padding: 15,
+                                usePointStyle: true,
+                                font: { size: 11 }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Criação inicial
+        createCharts();
+
+        // Observa mudança de tema (dark/light)
+        const observer = new MutationObserver(() => createCharts());
+        observer.observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ['class']
+        });
+    });
+    </script>
+@endif
+
+@if(Auth::user()->has_seen_intro && !Auth::user()->has_completed_tour)
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const driver = window.driver.js.driver;
+        const isMobile = window.innerWidth < 1024;
+
+        let tourSteps = [
+            {
+                element: '#tour-chamada',
+                popover: {
+                    title: 'Diário de Classe',
+                    description: 'Registre sua presença do dia com um clique. Ou, marque um dia livre.'
+                }
+            },
+            {
+                element: '#tour-status',
+                popover: {
+                    title: 'Seu Painel',
+                    description: 'Acompanhe sua frequência global e veja alertas de matérias em risco.'
+                }
+            },
+            {
+                element: '#tour-theme-toggle',
+                popover: {
+                    title: 'Modo Noturno',
+                    description: 'Prefere estudar à noite? Troque o tema aqui.'
+                }
+            }
+        ];
+
+        if (isMobile) {
+            tourSteps.push(
+                { element: '#tour-add-mobile', popover: { title: 'Adicione uma Matéria', description: 'Toque no botão central para adicionar suas disciplinas.' } },
+                { element: '#tour-grade-mobile', popover: { title: 'Sua Grade', description: 'Veja seus horários nesta aba.' } },
+                { element: '#tour-profile-mobile', popover: { title: 'Seu Perfil', description: 'Gerencie sua conta e outras configurações aqui.' } }
+            );
+        } else {
+            tourSteps.push(
+                { element: '#tour-nova-materia', popover: { title: 'Adicione uma Matéria', description: 'Comece clicando aqui para cadastrar disciplinas.' } },
+                { element: '#tour-grade-desktop', popover: { title: 'Grade Horária', description: 'Acesse a visão completa da sua semana.' } }
+            );
+        }
+
+        const driverObj = driver({
+            showProgress: true,
+            allowClose: true,
+            animate: true,
+            nextBtnText: 'Próximo',
+            prevBtnText: 'Voltar',
+            doneBtnText: 'Concluir',
+            steps: tourSteps,
+            onDestroyStarted: () => {
+                fetch('{{ route("tour.finish") }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                driverObj.destroy();
+            }
+        });
+
+        setTimeout(() => driverObj.drive(), 1000);
+    });
+    </script>
 @endif
 
 </x-app-layout>
