@@ -5,6 +5,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{{ config('app.name', 'Frequência') }}</title>
 
+        {{-- PWA Manifest & Icons (Garante que o navegador reconheça) --}}
+        <link rel="manifest" href="{{ asset('manifest.json') }}">
+        <meta name="theme-color" content="#2563eb">
+        <link rel="apple-touch-icon" href="{{ asset('img/icons/icon-192x192.png') }}">
+
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
 
@@ -64,6 +69,14 @@
                 </p>
 
                 <div class="space-y-3">
+                    {{-- BOTÃO PWA PERSONALIZADO (Começa oculto "hidden") --}}
+                    <button id="installAppBtn" class="hidden md:hidden w-full py-3.5 px-6 text-center text-blue-600 bg-blue-50 hover:bg-blue-100 border-2 border-blue-100 dark:bg-gray-800 dark:border-gray-700 dark:text-blue-400 rounded-xl font-bold shadow-sm transition transform active:scale-95 flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                        Instalar Aplicativo
+                    </button>
+
                     @if (Route::has('login'))
                         @auth
                             <a href="{{ url('/dashboard') }}" class="block w-full py-3.5 px-6 text-center text-white bg-blue-600 hover:bg-blue-700 rounded-xl font-bold shadow-lg shadow-blue-600/30 transition transform active:scale-95">
@@ -91,6 +104,46 @@
 
             </div>
         </main>
+
+        {{-- SCRIPT DE INSTALAÇÃO PWA --}}
+        <script>
+            let deferredPrompt;
+            const installBtn = document.getElementById('installAppBtn');
+
+            // 1. Escuta o evento que diz "Este site pode ser instalado"
+            window.addEventListener('beforeinstallprompt', (e) => {
+                // Impede o banner automático do Chrome (queremos usar o nosso botão)
+                e.preventDefault();
+                // Guarda o evento para usar depois
+                deferredPrompt = e;
+                // Mostra o botão
+                installBtn.classList.remove('hidden');
+            });
+
+            // 2. O que acontece ao clicar no botão
+            installBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    // Dispara o prompt nativo de instalação
+                    deferredPrompt.prompt();
+                    // Espera a escolha do usuário
+                    const { outcome } = await deferredPrompt.userChoice;
+                    // Limpa a variável
+                    deferredPrompt = null;
+                    // Esconde o botão novamente
+                    installBtn.classList.add('hidden');
+                }
+            });
+
+            // 3. Verifica se JÁ está instalado (Standalone) e esconde o botão
+            window.addEventListener('appinstalled', () => {
+                installBtn.classList.add('hidden');
+                deferredPrompt = null;
+            });
+
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                installBtn.classList.add('hidden');
+            }
+        </script>
 
     </body>
 </html>

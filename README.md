@@ -79,8 +79,8 @@ O sistema **não substitui** o diário oficial das instituições de ensino e **
 - [x] Implementar funcionalidade "Registrar Presença".
 
 ### 📱 Fase 4: PWA & Finalização (06/01 - 01/02)
-- [ ] Configurar `manifest.json` (Ícones, Nome, Cores).
-- [ ] Configurar Service Workers (Cache offline).
+- [x] Configurar `manifest.json` (Ícones, Nome, Cores).
+- [x] Configurar Service Workers (Cache offline).
 - [ ] Testar instalação no Android/iOS.
 - [ ] Correção de Bugs e refinamento visual.
 - [ ] Escrever Documentação Final.
