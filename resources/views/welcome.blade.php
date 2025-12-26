@@ -5,7 +5,6 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{{ config('app.name', 'Frequência') }}</title>
 
-        {{-- PWA Manifest & Icons (Garante que o navegador reconheça) --}}
         <link rel="manifest" href="{{ asset('manifest.json') }}">
         <meta name="theme-color" content="#2563eb">
         <link rel="apple-touch-icon" href="{{ asset('img/icons/icon-192x192.png') }}">
@@ -77,6 +76,33 @@
                         Instalar Aplicativo
                     </button>
 
+                    {{-- TUTORIAL DE INSTALAÇÃO IOS (Oculto por padrão, aparece ao clicar no botão) --}}
+                    <div id="iosInstallToast" class="hidden fixed bottom-6 left-4 right-4 bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl p-4 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 z-50 animate-fade-in-up">
+                        <div class="flex items-start gap-4">
+                            {{-- Botão Fechar --}}
+                            <button onclick="document.getElementById('iosInstallToast').classList.add('hidden')" class="absolute top-2 right-2 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                            
+                            <div class="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl flex items-center justify-center shrink-0">
+                                <img src="{{ asset('img/icons/icon-192x192.png') }}" class="w-10 h-10 rounded-lg shadow-sm">
+                            </div>
+
+                            <div class="flex-1 pr-6">
+                                <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-1">Instalar no iPhone</h3>
+                                <p class="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
+                                    1. Toque no botão <strong class="text-blue-600">Compartilhar</strong> 
+                                    <svg class="w-4 h-4 inline-block align-text-bottom text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+                                    abaixo.<br>
+                                    2. Selecione <strong class="text-gray-900 dark:text-white">Adicionar à Tela de Início</strong> 
+                                    <svg class="w-4 h-4 inline-block align-text-bottom text-gray-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>.
+                                </p>
+                            </div>
+                        </div>
+                        {{-- Seta apontando para baixo --}}
+                        <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white dark:bg-gray-800 transform rotate-45 border-r border-b border-gray-200 dark:border-gray-700"></div>
+                    </div>
+
                     @if (Route::has('login'))
                         @auth
                             <a href="{{ url('/dashboard') }}" class="block w-full py-3.5 px-6 text-center text-white bg-blue-600 hover:bg-blue-700 rounded-xl font-bold shadow-lg shadow-blue-600/30 transition transform active:scale-95">
@@ -109,34 +135,43 @@
         <script>
             let deferredPrompt;
             const installBtn = document.getElementById('installAppBtn');
+            const iosToast = document.getElementById('iosInstallToast');
 
-            // 1. Escuta o evento que diz "Este site pode ser instalado"
+            // --- LÓGICA ANDROID / CHROME ---
             window.addEventListener('beforeinstallprompt', (e) => {
-                // Impede o banner automático do Chrome (queremos usar o nosso botão)
                 e.preventDefault();
-                // Guarda o evento para usar depois
                 deferredPrompt = e;
-                // Mostra o botão
-                installBtn.classList.remove('hidden');
+                installBtn.classList.remove('hidden'); // Mostra botão no Android
             });
 
-            // 2. O que acontece ao clicar no botão
+            // --- LÓGICA IPHONE (iOS) ---
+            const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent) && !window.MSStream;
+            const isInStandaloneMode = ('standalone' in window.navigator) && (window.navigator.standalone);
+
+            if (isIos && !isInStandaloneMode) {
+                installBtn.classList.remove('hidden'); // Mostra botão no iOS também
+            }
+
+            // --- CLICK HANDLER
             installBtn.addEventListener('click', async () => {
                 if (deferredPrompt) {
-                    // Dispara o prompt nativo de instalação
+                    // Se for Android/PC, dispara a instalação nativa
                     deferredPrompt.prompt();
-                    // Espera a escolha do usuário
                     const { outcome } = await deferredPrompt.userChoice;
-                    // Limpa a variável
+                    if (outcome === 'accepted') {
+                        installBtn.classList.add('hidden');
+                    }
                     deferredPrompt = null;
-                    // Esconde o botão novamente
-                    installBtn.classList.add('hidden');
+                } else if (isIos) {
+                    // Se for iOS, mostra o Toast de instruções
+                    iosToast.classList.remove('hidden');
                 }
             });
 
-            // 3. Verifica se JÁ está instalado (Standalone) e esconde o botão
+            // --- LIMPEZA PÓS-INSTALAÇÃO ---
             window.addEventListener('appinstalled', () => {
                 installBtn.classList.add('hidden');
+                iosToast.classList.add('hidden');
                 deferredPrompt = null;
             });
 
