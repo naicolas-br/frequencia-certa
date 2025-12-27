@@ -22,6 +22,6 @@ php artisan route:cache
 php artisan view:cache
 
 echo "==> Rodando migrações (Neon/Postgres)"
-php artisan migrate --force --no-interaction
+php artisan migrate:fresh --force --no-interaction
 
 echo "==> OK"
