@@ -21,7 +21,8 @@ php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-echo "==> Rodando migrações (Neon/Postgres)"
-php artisan migrate:fresh --force --no-interaction
+echo "==> Rodando migrations com conexão DIRECT (Neon)"
+export DATABASE_URL="$DATABASE_URL_DIRECT"
+php artisan migrate --force --no-interaction
 
-echo "==> OK"
+echo "==> Build finalizado com sucesso"
