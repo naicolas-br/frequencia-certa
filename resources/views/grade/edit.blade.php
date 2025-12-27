@@ -23,7 +23,24 @@
 
             <div class="bg-white/60 dark:bg-gray-900/60 backdrop-blur-xl rounded-[2.5rem] shadow-sm border border-white/20 dark:border-gray-800 p-6 sm:p-8 relative overflow-hidden">
                 
-                <form action="{{ route('grade.update', $horario->id) }}" method="POST" x-data="{ dia: '{{ $horario->dia_semana }}' }">
+                {{-- EXIBIÇÃO DE ERROS DE VALIDAÇÃO --}}
+                @if ($errors->any())
+                    <div class="mb-6 p-4 rounded-2xl bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800">
+                        <div class="flex items-center gap-2 text-red-600 dark:text-red-400 font-bold mb-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <span>Algo não está certo:</span>
+                        </div>
+                        <ul class="list-disc list-inside text-sm text-red-600 dark:text-red-400 space-y-1">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                {{-- FORMULÁRIO --}}
+                <form action="{{ route('grade.update', $horario->id) }}" method="POST" 
+                      x-data="{ dia: '{{ old('dia_semana', $horario->dia_semana) }}' }">
                     @csrf
                     @method('PUT')
                     
@@ -38,7 +55,7 @@
                                 <label class="cursor-pointer snap-center shrink-0">
                                     <input type="radio" name="dia_semana" value="{{ $k }}" class="sr-only" x-model="dia">
                                     <div class="px-5 py-3 rounded-2xl text-sm font-bold transition-all duration-300 transform active:scale-95 border"
-                                          :class="dia == '{{ $k }}' 
+                                         :class="dia == '{{ $k }}' 
                                             ? 'bg-gradient-to-tr from-blue-600 to-blue-500 text-white shadow-lg shadow-blue-500/30 border-transparent scale-105' 
                                             : 'bg-white/40 dark:bg-black/20 text-gray-600 dark:text-gray-400 border-white/20 dark:border-gray-700 hover:bg-white/60 dark:hover:bg-gray-800/60'">
                                         {{ $d }}
@@ -51,8 +68,12 @@
                     <div class="flex items-center gap-4 mb-8">
                         <div class="flex-1 relative group">
                             <label class="block text-xs font-bold text-gray-500 uppercase mb-2 ml-1">Início</label>
-                            <input type="time" name="horario_inicio" value="{{ $horario->horario_inicio }}" required 
-                                class="w-full text-center rounded-2xl bg-white/50 dark:bg-black/20 border border-gray-200 dark:border-gray-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:text-white py-4 font-mono text-xl font-bold shadow-sm transition-all group-hover:bg-white/80 dark:group-hover:bg-black/30">
+                            
+                            {{-- Correção Crítica: Formata para H:i e usa old() --}}
+                            <input type="time" name="horario_inicio" 
+                                   value="{{ old('horario_inicio', \Carbon\Carbon::parse($horario->horario_inicio)->format('H:i')) }}" 
+                                   required 
+                                   class="w-full text-center rounded-2xl bg-white/50 dark:bg-black/20 border border-gray-200 dark:border-gray-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:text-white py-4 font-mono text-xl font-bold shadow-sm transition-all group-hover:bg-white/80 dark:group-hover:bg-black/30 @error('horario_inicio') border-red-500 ring-4 ring-red-500/10 @enderror">
                         </div>
                         
                         <div class="pt-6 text-gray-400">
@@ -61,8 +82,12 @@
 
                         <div class="flex-1 relative group">
                             <label class="block text-xs font-bold text-gray-500 uppercase mb-2 ml-1">Fim</label>
-                            <input type="time" name="horario_fim" value="{{ $horario->horario_fim }}" required 
-                                class="w-full text-center rounded-2xl bg-white/50 dark:bg-black/20 border border-gray-200 dark:border-gray-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:text-white py-4 font-mono text-xl font-bold shadow-sm transition-all group-hover:bg-white/80 dark:group-hover:bg-black/30">
+                            
+                            {{-- Correção Crítica: Formata para H:i e usa old() --}}
+                            <input type="time" name="horario_fim" 
+                                   value="{{ old('horario_fim', \Carbon\Carbon::parse($horario->horario_fim)->format('H:i')) }}" 
+                                   required 
+                                   class="w-full text-center rounded-2xl bg-white/50 dark:bg-black/20 border border-gray-200 dark:border-gray-700 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 dark:text-white py-4 font-mono text-xl font-bold shadow-sm transition-all group-hover:bg-white/80 dark:group-hover:bg-black/30 @error('horario_fim') border-red-500 ring-4 ring-red-500/10 @enderror">
                         </div>
                     </div>
 
