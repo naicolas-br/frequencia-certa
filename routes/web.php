@@ -24,6 +24,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// =========================================================================
+// Tela de offline
+// =========================================================================
+Route::get('/offline', function () {
+    return view('offline'); // Ou crie uma view 'offline.blade.php' simples
+});
+
+
 // --- GRUPO PROTEGIDO (Autenticação Necessária) ---
 Route::middleware(['auth', 'verified'])->group(function () {
 
@@ -134,12 +142,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/relatorio/baixar', [RelatorioController::class, 'gerarRelatorio'])
         ->name('relatorio.baixar');
 
-    // =========================================================================
-    // 7. PWA
-    // =========================================================================
-    Route::get('/offline', function () {
-        return view('offline'); // Ou crie uma view 'offline.blade.php' simples
-    });
 
 });
 
