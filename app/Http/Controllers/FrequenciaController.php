@@ -14,6 +14,16 @@ class FrequenciaController extends Controller
     // API: Busca aulas de uma data específica (com histórico)
     public function buscarPorData(Request $request)
     {
+
+        $request->validate([
+        'data' => [
+            'required', 
+            'date',
+            'after_or_equal:' . now()->startOfYear()->format('Y-m-d'), // >= 01/01/202X
+            'before_or_equal:' . now()->endOfYear()->format('Y-m-d'),   // <= 31/12/202X]
+        ],
+        ]);
+
         // Pega a data da URL (?data=2025-12-18) ou usa Hoje se não vier nada
         $dataAlvo = $request->query('data', now()->format('Y-m-d'));
 
