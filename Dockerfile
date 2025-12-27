@@ -15,8 +15,12 @@ COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-progress
+RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-progress --no-scripts
+
 COPY . .
+
+RUN php artisan package:discover --ansi \
+  && composer dump-autoload --optimize
 
 # ---------- Runtime (PHP 8.2) ----------
 FROM php:8.2-cli-alpine
