@@ -10,26 +10,17 @@ class DisciplinaController extends Controller
 {
     public function index()
     {
-        /**
-         * ALTERAÇÃO IMPORTANTE:
-         * Usamos o 'with' para trazer junto os Horários e Frequências.
-         * Isso evita que o sistema vá no banco de dados 10 vezes se o aluno tiver 10 matérias.
-         */ 
         $disciplinas = Auth::user()->disciplinas()->with(['horarios', 'frequencias'])->get();
-        
         return view('dashboard', compact('disciplinas'));
     }
 
-    // 1. Mostra a tela de cadastro
     public function criar()
     {
         return view('disciplinas.create');
     }
 
-    // 2. Recebe os dados e salva no banco
     public function store(Request $request)
     {
-            // 1. Validação
         $request->validate([
             'nome' => 'required|string|max:255',
             'cor' => 'required|string|max:7',
@@ -40,8 +31,6 @@ class DisciplinaController extends Controller
         $inicio = $request->data_inicio ?? Auth::user()->ano_letivo_inicio;
         $fim    = $request->data_fim    ?? Auth::user()->ano_letivo_fim;
 
-        // 2. Salvar no Banco
-        // Usamos o relacionamento para já vincular ao usuário logado
         Auth::user()->disciplinas()->create([
             'nome' => $request->nome,
             'cor' => $request->cor,
@@ -51,7 +40,11 @@ class DisciplinaController extends Controller
             'porcentagem_minima' => 75,
         ]);
 
-        // 3. Redirecionar
+        // ALTERAÇÃO: Suporte a AJAX
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['message' => 'Disciplina cadastrada com sucesso!'], 201);
+        }
+
         return redirect()->route('dashboard')->with('toast',[
             'type' => 'success',
             'message' => 'Disciplina cadastrada com sucesso!'
@@ -61,18 +54,12 @@ class DisciplinaController extends Controller
     public function edit($id)
     {
         $disciplina = Disciplina::findOrFail($id);
-
-        // Segurança: Verifica se a disciplina pertence ao usuário logado
         if ($disciplina->user_id !== Auth::id()) {
             abort(403, 'Acesso não autorizado');
         }
-
         return view('disciplinas.edit', compact('disciplina'));
     }
 
-    /**
-     * Salva as alterações no banco (PUT)
-     */
     public function update(Request $request, $id)
     {
         $disciplina = Disciplina::findOrFail($id);
@@ -95,27 +82,39 @@ class DisciplinaController extends Controller
             'data_fim' => $request->data_fim
         ]);
 
+        // ALTERAÇÃO: Suporte a AJAX
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['message' => 'Disciplina atualizada com sucesso!'], 200);
+        }
+
         return redirect()->route('dashboard')->with('toast',[
             'type' => 'success',
             'message' => 'Disciplina atualizada com sucesso!'
         ]);
     }
 
-    /**
-     * Apaga a disciplina e suas faltas (DELETE)
-     */
-    public function destroy($id)
+    public function destroy(Request $request, $id) // Injetei o Request aqui
     {
         $disciplina = Disciplina::findOrFail($id);
 
         if ($disciplina->user_id !== Auth::id()) {
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json(['error' => 'Não autorizado'], 403);
+            }
             abort(403);
         }
 
-        // Ao deletar a disciplina, o Laravel já deve deletar as grades e frequências 
-        // se as chaves estrangeiras estiverem configuradas com 'onDelete cascade'.
-        // Caso contrário, ele deleta apenas a disciplina.
         $disciplina->delete();
+
+        /**
+         * ALTERAÇÃO PRINCIPAL:
+         * Se a requisição for AJAX (como no botão de excluir da dashboard),
+         * retornamos JSON. Assim o fetch() no JavaScript recebe um 200 OK limpo,
+         * sem redirecionamentos que causam erro de cache.
+         */
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['message' => 'Disciplina removida com sucesso!'], 200);
+        }
 
         return redirect()->route('dashboard')->with('toast',[
             'type' => 'success',
