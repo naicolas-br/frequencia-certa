@@ -8,82 +8,67 @@
     <div class="py-6 sm:py-10 pb-24 md:pb-0">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
 
+            {{-- CABEÇALHO --}}
             <div class="flex flex-col md:flex-row justify-between items-end md:items-center gap-4">
                 <div>
                     <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white tracking-tight">
                         @php
                         $hora = now()->hour;
-
-                        if ($hora < 12) {
-                            $saudacao='Bom dia' ;
-                            } elseif ($hora < 18) {
-                            $saudacao='Boa tarde' ;
+                        if ($hora < 12) { $saudacao='Bom dia' ; } elseif ($hora < 18) { $saudacao='Boa tarde' ; } else { $saudacao='Boa noite' ; }
+                        @endphp
+                        {{ $saudacao }}, {{ explode(' ', Auth::user()->name)[0] }} 👋
+                    </h1>
+                    <p class="text-gray-500 dark:text-gray-400 mt-1 text-sm sm:text-base">
+                        @php
+                            $hora = now()->hour;
+                            $diaHoje = now()->dayOfWeek;
+                            $mensagensPorHora = [
+                                0 => 'Já deu por hoje 🙂 — descansar também é produtividade.',
+                                1 => 'Hora de desligar um pouco. Um bom sono melhora seu rendimento.',
+                                2 => 'Sono é parte do progresso. Seu eu de amanhã agradece.',
+                                3 => 'Tá bem tarde… cuida de você. Amanhã é um novo dia.',
+                                4 => 'Quase amanhecendo. Que tal se preparar pra não correr depois?',
+                                5 => 'Um novo começo chegando 🌅 Ajuste o ritmo e vai com calma.',
+                                6 => 'Bom começo de dia! Presença hoje faz diferença no final do semestre.',
+                                7 => 'Organiza o dia rapidinho e evita correria mais tarde.',
+                                8 => 'Primeiras aulas, primeira chance de mandar bem. Bora marcar presença?',
+                                9 => 'Mantém o ritmo: consistência é o que dá resultado.',
+                                10 => 'Cada aula conta. Confere sua presença e segue firme.',
+                                11 => 'Último gás da manhã 💪 Foco no que importa.',
+                                12 => 'Pausa merecida! Já aproveita e confirma sua presença.',
+                                13 => 'De volta aos estudos: calma, atenção e presença.',
+                                14 => 'Ainda dá tempo de virar o jogo hoje. Bora manter a frequência?',
+                                15 => 'Vai no constante: consistência vence a pressa.',
+                                16 => 'Olho na frequência 👀 O que você garante hoje evita dor de cabeça depois.',
+                                17 => 'Final da tarde chegando. Fecha o dia com presença em dia.',
+                                18 => 'Encerrando? Dá uma olhada na chamada antes de sair.',
+                                19 => 'Se organizar agora poupa estresse amanhã.',
+                                20 => 'Revisar hoje é se agradecer amanhã. 😉',
+                                21 => 'Última checagem do dia: tudo certo na frequência?',
+                                22 => 'Fechando o dia com responsabilidade. Boa!',
+                                23 => 'Hora de descansar 🌙 Amanhã continua — com mais uma presença.'
+                            ];
+                            $temAulaHoje = $todasDisciplinas->contains(function($d) use ($diaHoje) {
+                                return $d->horarios->contains('dia_semana', $diaHoje);
+                            });
+                            
+                            if ($todasDisciplinas->isEmpty()) {
+                                echo 'Comece adicionando suas matérias para montar a grade 🚀';
+                            } elseif (!$temAulaHoje) {
+                                echo 'Hoje não há aulas programadas. Aproveite o descanso 😌';
+                            } elseif ($materiasEmRisco > 0) {
+                                echo '⚠️ Atenção: você tem matérias com frequência baixa. Foco total!';
                             } else {
-                            $saudacao='Boa noite' ;
+                                echo $mensagensPorHora[$hora];
                             }
-                            @endphp
-                            {{ $saudacao }}, {{ explode(' ', Auth::user()->name)[0] }} 👋
-                            </h1>
-                            <p class="text-gray-500 dark:text-gray-400 mt-1 text-sm sm:text-base">
-                                @php
-                                    $hora = now()->hour;
-                                    $diaHoje = now()->dayOfWeek; // 0 (Dom) a 6 (Sáb)
-
-                                    $mensagensPorHora = [
-                                    0 => 'Já deu por hoje 🙂 — descansar também é produtividade.',
-                                    1 => 'Hora de desligar um pouco. Um bom sono melhora seu rendimento.',
-                                    2 => 'Sono é parte do progresso. Seu eu de amanhã agradece.',
-                                    3 => 'Tá bem tarde… cuida de você. Amanhã é um novo dia.',
-                                    4 => 'Quase amanhecendo. Que tal se preparar pra não correr depois?',
-                                    5 => 'Um novo começo chegando 🌅 Ajuste o ritmo e vai com calma.',
-                                    6 => 'Bom começo de dia! Presença hoje faz diferença no final do semestre.',
-                                    7 => 'Organiza o dia rapidinho e evita correria mais tarde.',
-                                    8 => 'Primeiras aulas, primeira chance de mandar bem. Bora marcar presença?',
-                                    9 => 'Mantém o ritmo: consistência é o que dá resultado.',
-                                    10 => 'Cada aula conta. Confere sua presença e segue firme.',
-                                    11 => 'Último gás da manhã 💪 Foco no que importa.',
-                                    12 => 'Pausa merecida! Já aproveita e confirma sua presença.',
-                                    13 => 'De volta aos estudos: calma, atenção e presença.',
-                                    14 => 'Ainda dá tempo de virar o jogo hoje. Bora manter a frequência?',
-                                    15 => 'Vai no constante: consistência vence a pressa.',
-                                    16 => 'Olho na frequência 👀 O que você garante hoje evita dor de cabeça depois.',
-                                    17 => 'Final da tarde chegando. Fecha o dia com presença em dia.',
-                                    18 => 'Encerrando? Dá uma olhada na chamada antes de sair.',
-                                    19 => 'Se organizar agora poupa estresse amanhã.',
-                                    20 => 'Revisar hoje é se agradecer amanhã. 😉',
-                                    21 => 'Última checagem do dia: tudo certo na frequência?',
-                                    22 => 'Fechando o dia com responsabilidade. Boa!',
-                                    23 => 'Hora de descansar 🌙 Amanhã continua — com mais uma presença.'
-                                    ];
-
-                                    $temAulaHoje = $todasDisciplinas->contains(function($d) use ($diaHoje) {
-                                                return $d->horarios->contains('dia_semana', $diaHoje);
-                                            });
-                                            
-                                            if ($todasDisciplinas->isEmpty()) {
-                                                // 1. Usuário Novo
-                                                echo 'Comece adicionando suas matérias para montar a grade 🚀';
-                                            
-                                            } elseif (!$temAulaHoje) {
-                                                // 2. Dia Livre (Detectado automaticamente, sem precisar clicar no filtro)
-                                                echo 'Hoje não há aulas programadas. Aproveite o descanso 😌';
-                                                
-                                            } elseif ($materiasEmRisco > 0) {
-                                                // 3. Alerta de Risco (Se tem aula e está perigando)
-                                                echo '⚠️ Atenção: você tem matérias com frequência baixa. Foco total!';
-                                                
-                                            } else {
-                                                // 4. Dia Normal
-                                                echo $mensagensPorHora[$hora];
-                                            }
-                                @endphp
-
-                            </p>
+                        @endphp
+                    </p>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
+                {{-- CARD DO DIÁRIO DE CLASSE --}}
                 <div id="tour-chamada" class="lg:col-span-2 relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-blue-600 to-indigo-700 shadow-2xl shadow-blue-900/20 text-white p-6 sm:p-8"
                     x-data="{
                         modalOpen: false, 
@@ -93,12 +78,45 @@
                         loading: false, 
                         enviando: false, 
                         sucesso: false, 
-                        dataSelecionada: new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 10),
+                        dataSelecionada: '{{ date('Y-m-d') }}',
                         
                         async abrirModal() {
                             this.modalOpen = true;
                             this.sucesso = false;
-                            this.dataSelecionada = new Date(new Date().getTime() - (new Date().getTimezoneOffset() * 60000)).toISOString().slice(0, 10);
+                            this.dataSelecionada = '{{ date('Y-m-d') }}';
+                            await this.buscarAulas();
+                        },
+
+                        async validarDataEBuscar() {
+                            const hoje = '{{ date('Y-m-d') }}';
+                            const inicioAno = '{{ date('Y') }}-01-01';
+                            
+                            // 1. Validação: FUTURO
+                            if (this.dataSelecionada > hoje) {
+                                // Usa o teu swalTailwind global (definido no app.js)
+                                window.swalTailwind.fire({
+                                    icon: 'warning',
+                                    title: 'Data Inválida',
+                                    text: 'Você não pode registrar presença em datas futuras.',
+                                    confirmButtonText: 'Entendi'
+                                });
+                                this.dataSelecionada = hoje;
+                                return;
+                            }
+
+                            // 2. Validação: ANO PASSADO
+                            if (this.dataSelecionada < inicioAno) {
+                                window.swalTailwind.fire({
+                                    icon: 'info',
+                                    title: 'Ano Letivo',
+                                    text: 'Você só pode visualizar frequências deste ano letivo.',
+                                    confirmButtonText: 'Ok'
+                                });
+                                this.dataSelecionada = hoje;
+                                return;
+                            }
+
+                            // 3. Se passou, busca
                             await this.buscarAulas();
                         },
 
@@ -114,7 +132,7 @@
                                     this.diaLivre = data.motivo;
                                     this.loading = false;
                                     return;
-                                    }
+                                }
                                 this.diaLivre = null;
                                 this.aulas = data;
                             } catch(e) { console.error(e); }
@@ -135,12 +153,22 @@
                                 });
                                 if (response.ok) {
                                     this.sucesso = true;
+                                    // Toast de sucesso (opcional)
+                                    // window.toastSuccess('Chamada salva com sucesso!');
                                     setTimeout(() => { window.location.reload(); }, 1000);
                                 }
-                            } catch (e) { alert('Erro de conexão'); }
+                            } catch (e) { 
+                                window.swalTailwind.fire({
+                                    icon: 'error',
+                                    title: 'Erro',
+                                    text: 'Falha na conexão com o servidor.'
+                                });
+                            }
                             this.enviando = false;
                         }
                     }">
+
+                    {{-- ELEMENTOS DE FUNDO DO CARD --}}
                     <div class="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
                     <div class="absolute bottom-0 left-0 -mb-10 -ml-10 w-40 h-40 bg-purple-500/20 rounded-full blur-2xl"></div>
 
@@ -175,20 +203,15 @@
                             Marcar Dia Livre
                         </button>
 
-                        <a href="{{ route('eventos.index') }}"
-                            class="mt-2 inline-flex items-center justify-center gap-2
-          text-sm font-semibold text-white/90 hover:text-white
-          underline underline-offset-4">
+                        <a href="{{ route('eventos.index') }}" class="mt-2 inline-flex items-center justify-center gap-2 text-sm font-semibold text-white/90 hover:text-white underline underline-offset-4">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                             Gerenciar dias livres
                         </a>
-
-
                     </div>
 
+                    {{-- MODAL DE CHAMADA --}}
                     <div x-show="modalOpen" style="display: none;" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6" role="dialog" aria-modal="true">
                         <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity" @click="modalOpen = false"></div>
 
@@ -203,52 +226,55 @@
                             <div class="flex-1 overflow-y-auto p-6 space-y-6">
                                 <div>
                                     <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Selecione a Data</label>
-                                    <input type="date" x-model="dataSelecionada" @change="buscarAulas()" class="w-full rounded-xl border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white py-3 px-4 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 shadow-sm">
+                                    <input 
+                                        type="date" 
+                                        x-model="dataSelecionada" 
+                                        @change="validarDataEBuscar()" 
+                                        min="{{ date('Y') }}-01-01" 
+                                        max="{{ date('Y-m-d') }}" 
+                                        class="w-full rounded-xl border-gray-200 dark:border-gray-700 dark:bg-gray-800 dark:text-white py-3 px-4 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 shadow-sm"
+                                    >
                                 </div>
 
-                                <div x-show="diaLivre"
-                                    class="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-50 text-red-700 border border-red-200 text-sm font-semibold">
+                                <div x-show="diaLivre" class="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-50 text-red-700 border border-red-200 text-sm font-semibold">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                     </svg>
-
-                                    <span>
-                                        Dia livre:
-                                        <strong x-text="diaLivre"></strong>
-                                    </span>
+                                    <span>Dia livre: <strong x-text="diaLivre"></strong></span>
                                 </div>
-
 
                                 <div class="min-h-[200px]">
-                                    <div x-show="loading" class="flex flex-col items-center justify-center h-40 text-gray-400"><svg class="animate-spin h-8 w-8 text-blue-500 mb-3" fill="none" viewBox="0 0 24 24">
+                                    <div x-show="loading" class="flex flex-col items-center justify-center h-40 text-gray-400">
+                                        <svg class="animate-spin h-8 w-8 text-blue-500 mb-3" fill="none" viewBox="0 0 24 24">
                                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg><span class="text-sm font-medium">Sincronizando grade...</span></div>
+                                        </svg>
+                                        <span class="text-sm font-medium">Sincronizando grade...</span>
+                                    </div>
                                     <div x-show="sucesso" class="flex flex-col items-center justify-center h-40 text-emerald-500">
-                                        <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-3"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                            </svg></div><span class="font-bold text-lg">Salvo com Sucesso!</span>
+                                        <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-3">
+                                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                        </div>
+                                        <span class="font-bold text-lg">Salvo com Sucesso!</span>
                                     </div>
                                     <div x-show="!loading && !sucesso">
                                         <div x-show="aulas.length === 0 && !loading" class="text-center py-10 text-gray-400 text-sm">
-                                            <p x-show="diaLivre">
-                                                Dia livre — Nenhuma aula neste dia 🎉
-                                            </p>
-                                            <p x-show="!diaLivre">
-                                                Nenhuma aula nesta grade horária.
-                                            </p>
+                                            <p x-show="diaLivre">Dia livre — Nenhuma aula neste dia 🎉</p>
+                                            <p x-show="!diaLivre">Nenhuma aula nesta grade horária.</p>
                                         </div>
                                         <div class="space-y-3">
                                             <template x-for="(aula, index) in aulas" :key="index">
                                                 <div class="flex items-center justify-between p-4 rounded-2xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm">
                                                     <div>
                                                         <div class="flex items-center gap-2">
-                                                            <h4 class="font-bold text-gray-800 dark:text-gray-100" x-text="aula.nome"></h4><span x-show="aula.ja_registrado" class="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Editando</span>
+                                                            <h4 class="font-bold text-gray-800 dark:text-gray-100" x-text="aula.nome"></h4>
+                                                            <span x-show="aula.ja_registrado" class="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">Editando</span>
                                                         </div>
                                                         <p class="text-xs text-gray-500 mt-1 font-mono" x-text="aula.horario.substring(0,5)"></p>
                                                     </div>
-                                                    <button @click="aula.presente = !aula.presente" class="w-12 h-12 rounded-xl flex items-center justify-center transition-all active:scale-90 shadow-sm border" :class="aula.presente ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-red-50 border-red-200 text-red-600'"><span class="font-bold text-lg" x-text="aula.presente ? 'P' : 'F'"></span></button>
+                                                    <button @click="aula.presente = !aula.presente" class="w-12 h-12 rounded-xl flex items-center justify-center transition-all active:scale-90 shadow-sm border" :class="aula.presente ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-red-50 border-red-200 text-red-600'">
+                                                        <span class="font-bold text-lg" x-text="aula.presente ? 'P' : 'F'"></span>
+                                                    </button>
                                                 </div>
                                             </template>
                                         </div>
@@ -263,56 +289,35 @@
                         </div>
                     </div>
 
-                    <div x-show="modalEvento" style="display: none"
-                        class="fixed inset-0 z-50 flex items-center justify-center p-4">
-                        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"
-                            @click="modalEvento = false"></div>
-
+                    {{-- MODAL DE EVENTO --}}
+                    <div x-show="modalEvento" style="display: none" class="fixed inset-0 z-50 flex items-center justify-center p-4">
+                        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="modalEvento = false"></div>
                         <div class="relative bg-white dark:bg-gray-900 w-full max-w-md rounded-3xl shadow-2xl p-6">
-                            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">
-                                Marcar Dia Livre
-                            </h3>
-
+                            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Marcar Dia Livre</h3>
                             <form method="POST" action="{{ route('eventos.store') }}" class="space-y-4">
                                 @csrf
-
                                 <div>
                                     <label class="block text-sm font-semibold mb-1">Título</label>
-                                    <input type="text" name="titulo" required
-                                        placeholder="Ex: Feriado, Recesso, Falta Justificada"
-                                        class="w-full rounded-xl border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white">
+                                    <input type="text" name="titulo" required placeholder="Ex: Feriado, Recesso, Falta Justificada" class="w-full rounded-xl border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white">
                                 </div>
-
                                 <div>
                                     <label class="block text-sm font-semibold mb-1">Data</label>
-                                    <input type="date" name="data" required
-                                        class="w-full rounded-xl border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white">
+                                    <input type="date" name="data" required class="w-full rounded-xl border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white">
                                 </div>
-
                                 <div>
                                     <label class="block text-sm font-semibold mb-1">Tipo</label>
-                                    <select name="tipo" required
-                                        class="w-full rounded-xl border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white">
+                                    <select name="tipo" required class="w-full rounded-xl border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white">
                                         <option value="sem_aula">Sem Aula</option>
                                         <option value="feriado">Feriado Municipal</option>
                                     </select>
                                 </div>
-
                                 <div class="flex gap-3 pt-2">
-                                    <button type="submit"
-                                        class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl">
-                                        Salvar
-                                    </button>
-                                    <button type="button"
-                                        @click="modalEvento = false"
-                                        class="flex-1 bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold py-3 rounded-xl">
-                                        Cancelar
-                                    </button>
+                                    <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl">Salvar</button>
+                                    <button type="button" @click="modalEvento = false" class="flex-1 bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-bold py-3 rounded-xl">Cancelar</button>
                                 </div>
                             </form>
                         </div>
                     </div>
-
                 </div>
 
                 <div id="tour-status" class="grid grid-cols-2 lg:grid-cols-1 gap-4 lg:gap-6">
