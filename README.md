@@ -50,6 +50,13 @@ O projeto utiliza uma arquitetura moderna focada em performance e experiência d
 
 ---
 
+## ✅ Pré-requisitos
+
+- PHP 8.2+
+- Composer
+- Node.js + npm
+- MySQL (ou MariaDB)
+---
 ## 👥 Equipe de Desenvolvimento
 
 | Integrante | Funções Principais | GitHub |
@@ -68,7 +75,7 @@ git clone <URL_DO_REPOSITORIO>
 cd <NOME_DO_PROJETO>
 ```
 2. Instale as dependências do PHP:
-```Bash
+```bash
 composer install
 ```
 3. Instale as dependências do Front-end:
@@ -80,13 +87,25 @@ npm install
 cp .env.example .env
 php artisan key:generate
 ```
-5. Configure o banco de dados no .env e rode as migrations:
+
+5. Crie sua chave em: https://api.invertexto.com
+
+Adicione no .env:
+```env
+INVERTEXTO_API_KEY=SUACHAVE_AQUI
+```
+6. Configure o banco de dados no .env e rode as migrations:
 ```bash
 php artisan migrate
 ```
-6. Inicie o servidor
+7. Inicie o servidor em dois terminais
+
+**Terminal 1**
 ```bash
 php artisan serve
+```
+**Terminal 2**
+```bash
 npm run dev
 ```
 Acesse o projeto em: http://localhost:8000
